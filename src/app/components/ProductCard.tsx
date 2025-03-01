@@ -1,13 +1,13 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { Product } from '@/lib/types';
+import Image from "next/image";
+import Link from "next/link";
+import { Product } from "@/lib/types";
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
     <Link href={`/shop/${product.id}`} className="group">
       <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-w-7 xl:aspect-h-8">
         <Image
-          src={product.imageSrc || "/placeholder.svg"}
+          src={product.imageUrl || "/placeholder.svg"}
           alt={product.name}
           width={500}
           height={500}
