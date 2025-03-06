@@ -200,62 +200,1165 @@
 //   );
 // }
 
+// "use client";
+
+// import Image from "next/image";
+// import { useState } from "react";
+// import { useRouter } from "next/navigation";
+// import { Star, Truck, ArrowRight } from "lucide-react";
+// import Slider from "react-slick";
+// import "slick-carousel/slick/slick.css";
+// import "slick-carousel/slick/slick-theme.css";
+// import type { Product } from "@/lib/types";
+// import ColorSelector from "../../components/ColorSelector";
+// import SizeSelector from "../../components/SizeSelector";
+// import AddToCartButton from "../../components/AddToCartButton";
+// import RelatedProducts from "../../components/RelatedProducts";
+
+// export default function ProductDetails({ product }: { product: Product }) {
+//   const [quantity, setQuantity] = useState(1);
+//   const [mainImage, setMainImage] = useState(product.imageUrl);
+//   const router = useRouter();
+
+//   const discountPercentage = Math.round(
+//     ((product.originalPrice - product.price) / product.originalPrice) * 100
+//   );
+
+//   const handleAddToCart = () => {
+//     // Implement add to cart functionality
+//     console.log(`Added ${quantity} of ${product.name} to cart`);
+//   };
+
+//   const handleBuyNow = () => {
+//     // Navigate to checkout with product data
+//     router.push(`/checkout?product=${product.id}`);
+//   };
+
+//   const settings = {
+//     dots: true,
+//     infinite: true,
+//     speed: 500,
+//     slidesToShow: 4,
+//     slidesToScroll: 1,
+//     responsive: [
+//       {
+//         breakpoint: 1024,
+//         settings: {
+//           slidesToShow: 3,
+//           slidesToScroll: 1,
+//         },
+//       },
+//       {
+//         breakpoint: 600,
+//         settings: {
+//           slidesToShow: 2,
+//           slidesToScroll: 1,
+//         },
+//       },
+//     ],
+//   };
+
+//   return (
+//     <div className="bg-white">
+//       <div className="max-w-7xl mx-auto py-8 px-4 sm:py-16 sm:px-6 lg:px-8">
+//         <div className="lg:grid lg:grid-cols-2 lg:gap-x-8 lg:items-start">
+//           {/* Image gallery */}
+//           <div className="flex flex-col">
+//             <div className="w-full aspect-w-1 aspect-h-1 mb-4">
+//               <Image
+//                 src={mainImage || "/placeholder.svg"}
+//                 alt={product.name}
+//                 className="w-full h-full object-center object-cover rounded-lg"
+//                 width={600}
+//                 height={600}
+//               />
+//             </div>
+//             <Slider {...settings}>
+//               {product.images.map((img, index) => (
+//                 <div key={index} className="px-2">
+//                   <Image
+//                     src={img || "/placeholder.svg"}
+//                     alt={`${product.name} - Image ${index + 1}`}
+//                     width={100}
+//                     height={100}
+//                     className="w-full h-24 object-cover rounded-lg cursor-pointer"
+//                     onClick={() => setMainImage(img)}
+//                   />
+//                 </div>
+//               ))}
+//             </Slider>
+//           </div>
+
+//           {/* Product info */}
+//           <div className="mt-10 px-4 sm:px-0 sm:mt-16 lg:mt-0">
+//             <h1 className="text-3xl font-light text-gray-900 mb-2">
+//               {product.name}
+//             </h1>
+
+//             <div className="flex items-center space-x-2 mb-4">
+//               <div className="flex items-center">
+//                 {[...Array(5)].map((_, i) => (
+//                   <Star
+//                     key={i}
+//                     className={`h-5 w-5 ${
+//                       i < Math.floor(product.rating)
+//                         ? "text-yellow-400"
+//                         : "text-gray-300"
+//                     }`}
+//                   />
+//                 ))}
+//               </div>
+//               <span className="text-sm text-gray-600">
+//                 {product.rating} ({product.reviews} reviews)
+//               </span>
+//             </div>
+
+//             <div className="flex items-baseline space-x-4 mt-4">
+//               <p className="text-3xl font-medium text-red-600">
+//                 ${product.price.toLocaleString()}
+//               </p>
+//               <p className="text-xl text-gray-500 line-through">
+//                 ${product.originalPrice.toLocaleString()}
+//               </p>
+//               <p className="text-lg font-semibold text-red-600">
+//                 -{discountPercentage}% OFF
+//               </p>
+//             </div>
+
+//             <div className="mt-6">
+//               <h3 className="sr-only">Description</h3>
+//               <p className="text-base text-gray-900">{product.description}</p>
+//             </div>
+
+//             <div className="mt-8 bg-gray-100 p-4 rounded-lg">
+//               <div className="flex items-center space-x-2 mb-2">
+//                 <Truck className="h-5 w-5 text-gray-600" />
+//                 <span className="font-medium">Free Shipping</span>
+//               </div>
+//               <p className="text-sm text-gray-600">
+//                 Estimated delivery: 3-5 business days
+//               </p>
+//             </div>
+
+//             <div className="mt-8">
+//               <ColorSelector colors={product.colors} />
+//             </div>
+
+//             <div className="mt-8">
+//               <SizeSelector sizes={product.sizes} />
+//             </div>
+
+//             <div className="mt-8">
+//               <label
+//                 htmlFor="quantity"
+//                 className="text-sm font-medium text-gray-700"
+//               >
+//                 Quantity
+//               </label>
+//               <div className="flex items-center mt-1">
+//                 <button
+//                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
+//                   className="px-3 py-1 border rounded-l-md"
+//                 >
+//                   -
+//                 </button>
+//                 <input
+//                   type="number"
+//                   id="quantity"
+//                   name="quantity"
+//                   min="1"
+//                   value={quantity}
+//                   onChange={(e) =>
+//                     setQuantity(Math.max(1, Number.parseInt(e.target.value)))
+//                   }
+//                   className="w-16 text-center border-t border-b"
+//                 />
+//                 <button
+//                   onClick={() => setQuantity(quantity + 1)}
+//                   className="px-3 py-1 border rounded-r-md"
+//                 >
+//                   +
+//                 </button>
+//               </div>
+//             </div>
+
+//             <div className="mt-10 flex space-x-4">
+//               <AddToCartButton onClick={handleAddToCart} />
+//               <button
+//                 onClick={handleBuyNow}
+//                 className="flex-1 bg-red-600 text-white py-3 px-8 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-200"
+//               >
+//                 Buy Now
+//               </button>
+//             </div>
+
+//             <div className="mt-10 border-t border-gray-200 pt-8">
+//               <h2 className="text-lg font-medium mb-4">
+//                 Product Specifications
+//               </h2>
+//               <table className="w-full text-sm">
+//                 <tbody>
+//                   <tr className="border-b">
+//                     <td className="py-2 text-gray-600">Material</td>
+//                     <td className="py-2">100% genuine Italian leather</td>
+//                   </tr>
+//                   <tr className="border-b">
+//                     <td className="py-2 text-gray-600">Dimensions</td>
+//                     <td className="py-2">14" x 11" x 5"</td>
+//                   </tr>
+//                   <tr className="border-b">
+//                     <td className="py-2 text-gray-600">Weight</td>
+//                     <td className="py-2">2.5 lbs</td>
+//                   </tr>
+//                   <tr>
+//                     <td className="py-2 text-gray-600">Closure</td>
+//                     <td className="py-2">Zip-top</td>
+//                   </tr>
+//                 </tbody>
+//               </table>
+//             </div>
+
+//             {/* <div className="mt-10 border-t border-gray-200 pt-8">
+//               <h2 className="text-lg font-medium mb-4">Seller Information</h2>
+//               <div className="flex items-center justify-between">
+//                 <div>
+//                   <p className="font-medium">{product.seller}</p>
+//                   <div className="flex items-center mt-1">
+//                     <Star className="h-4 w-4 text-yellow-400 mr-1" />
+//                     <span className="text-sm text-gray-600">
+//                       {product.sellerRating} Positive Feedback
+//                     </span>
+//                   </div>
+//                 </div>
+//                 <button className="text-primary hover:text-secondary transition-colors duration-200 flex items-center">
+//                   Visit Store <ArrowRight className="h-4 w-4 ml-1" />
+//                 </button>
+//               </div>
+//             </div> */}
+//           </div>
+//         </div>
+
+//         {/* <div className="mt-16">
+//           <h2 className="text-2xl font-light mb-6">Product Description</h2>
+//           <div className="prose max-w-none">
+//             <p>{product.description}</p>
+//             <h3>Key Features:</h3>
+//             <ul>
+//               <li>Premium Italian leather construction</li>
+//               <li>Spacious main compartment with zip closure</li>
+//               <li>Interior zip pocket and two slip pockets</li>
+//               <li>Adjustable shoulder strap</li>
+//               <li>Gold-tone hardware accents</li>
+//             </ul>
+//             <p>
+//               Experience unparalleled luxury and functionality with our Elegant
+//               Leather Tote. Whether you're heading to the office or enjoying a
+//               weekend getaway, this versatile bag is the perfect companion for
+//               the modern, sophisticated individual.
+//             </p>
+//           </div>
+//         </div> */}
+
+//         <RelatedProducts category={product.category} />
+//       </div>
+//     </div>
+//   );
+// }
+
+// "use client";
+
+// import Image from "next/image";
+// import { useState } from "react";
+// import { useRouter } from "next/navigation";
+// import { Star, Truck, ArrowRight } from "lucide-react";
+// import Slider from "react-slick";
+// import "slick-carousel/slick/slick.css";
+// import "slick-carousel/slick/slick-theme.css";
+// import type { Product } from "@/lib/types";
+// import ColorSelector from "../../components/ColorSelector";
+// import SizeSelector from "../../components/SizeSelector";
+// import AddToCartButton from "../../components/AddToCartButton";
+// import RelatedProducts from "../../components/RelatedProducts";
+
+// export default function ProductDetails({ product }: { product: Product }) {
+//   const [quantity, setQuantity] = useState(1);
+//   const [mainImage, setMainImage] = useState(product.imageUrl);
+//   const router = useRouter();
+
+//   const discountPercentage = Math.round(
+//     ((product.originalPrice - product.price) / product.originalPrice) * 100
+//   );
+
+//   const handleAddToCart = () => {
+//     // Implement add to cart functionality
+//     console.log(`Added ${quantity} of ${product.name} to cart`);
+//   };
+
+//   const handleBuyNow = () => {
+//     // Navigate to checkout with product data
+//     router.push(`/checkout?product=${product.id}`);
+//   };
+
+//   const settings = {
+//     dots: true,
+//     infinite: true,
+//     speed: 500,
+//     slidesToShow: 4,
+//     slidesToScroll: 1,
+//     responsive: [
+//       {
+//         breakpoint: 1024,
+//         settings: {
+//           slidesToShow: 3,
+//           slidesToScroll: 1,
+//         },
+//       },
+//       {
+//         breakpoint: 600,
+//         settings: {
+//           slidesToShow: 2,
+//           slidesToScroll: 1,
+//         },
+//       },
+//     ],
+//   };
+
+//   const allImages = [product.imageUrl, ...product.images.map((img) => img.url)];
+
+//   return (
+//     <div className="bg-white" onClick={(e) => e.preventDefault()}>
+//       <div className="max-w-7xl mx-auto py-8 px-4 sm:py-16 sm:px-6 lg:px-8">
+//         <div className="lg:grid lg:grid-cols-2 lg:gap-x-8 lg:items-start">
+//           {/* Image gallery */}
+//           <div className="flex flex-col">
+//             <div className="w-full aspect-w-1 aspect-h-1 mb-4">
+//               <Image
+//                 src={mainImage || "/placeholder.svg"}
+//                 alt={product.name}
+//                 className="w-full h-full object-center object-cover rounded-lg"
+//                 width={600}
+//                 height={600}
+//               />
+//             </div>
+//             <Slider {...settings}>
+//               {allImages.map((img, index) => (
+//                 <div key={index} className="px-2">
+//                   <Image
+//                     src={img || "/placeholder.svg"}
+//                     alt={`${product.name} - Image ${index + 1}`}
+//                     width={100}
+//                     height={100}
+//                     className="w-full h-24 object-cover rounded-lg cursor-pointer"
+//                     onClick={(e) => {
+//                       e.preventDefault();
+//                       e.stopPropagation();
+//                       setMainImage(img);
+//                     }}
+//                   />
+//                 </div>
+//               ))}
+//             </Slider>
+//           </div>
+
+//           {/* Product info */}
+//           <div className="mt-10 px-4 sm:px-0 sm:mt-16 lg:mt-0">
+//             <h1 className="text-3xl font-light text-gray-900 mb-2">
+//               {product.name}
+//             </h1>
+
+//             <div className="flex items-center space-x-2 mb-4">
+//               <div className="flex items-center">
+//                 {[...Array(5)].map((_, i) => (
+//                   <Star
+//                     key={i}
+//                     className={`h-5 w-5 ${
+//                       i < Math.floor(product.rating)
+//                         ? "text-yellow-400"
+//                         : "text-gray-300"
+//                     }`}
+//                   />
+//                 ))}
+//               </div>
+//               <span className="text-sm text-gray-600">
+//                 {product.rating} ({product.reviews} reviews)
+//               </span>
+//             </div>
+
+//             <div className="flex items-baseline space-x-4 mt-4">
+//               <p className="text-3xl font-medium text-red-600">
+//                 ${product.price.toLocaleString()}
+//               </p>
+//               <p className="text-xl text-gray-500 line-through">
+//                 {/* ${product.originalPrice.toLocaleString()} */}
+//               </p>
+//               <p className="text-lg font-semibold text-red-600">
+//                 -{discountPercentage}% OFF
+//               </p>
+//             </div>
+
+//             <div className="mt-6">
+//               <h3 className="sr-only">Description</h3>
+//               <p className="text-base text-gray-900">{product.description}</p>
+//             </div>
+
+//             <div className="mt-8 bg-gray-100 p-4 rounded-lg">
+//               <div className="flex items-center space-x-2 mb-2">
+//                 <Truck className="h-5 w-5 text-gray-600" />
+//                 <span className="font-medium">Free Shipping</span>
+//               </div>
+//               <p className="text-sm text-gray-600">
+//                 Estimated delivery: 3-5 business days
+//               </p>
+//             </div>
+
+//             <div className="mt-8">
+//               {/* <ColorSelector colors={product.colors} /> */}
+//             </div>
+
+//             <div className="mt-8">
+//               {/* <SizeSelector sizes={product.sizes} /> */}
+//             </div>
+
+//             <div className="mt-8">
+//               <label
+//                 htmlFor="quantity"
+//                 className="text-sm font-medium text-gray-700"
+//               >
+//                 Quantity
+//               </label>
+//               <div className="flex items-center mt-1">
+//                 <button
+//                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
+//                   className="px-3 py-1 border rounded-l-md"
+//                 >
+//                   -
+//                 </button>
+//                 <input
+//                   type="number"
+//                   id="quantity"
+//                   name="quantity"
+//                   min="1"
+//                   value={quantity}
+//                   onChange={(e) =>
+//                     setQuantity(Math.max(1, Number.parseInt(e.target.value)))
+//                   }
+//                   className="w-16 text-center border-t border-b"
+//                 />
+//                 <button
+//                   onClick={() => setQuantity(quantity + 1)}
+//                   className="px-3 py-1 border rounded-r-md"
+//                 >
+//                   +
+//                 </button>
+//               </div>
+//             </div>
+
+//             <div className="mt-10 flex space-x-4">
+//               <AddToCartButton onClick={handleAddToCart} />
+//               <button
+//                 onClick={handleBuyNow}
+//                 className="flex-1 bg-red-600 text-white py-3 px-8 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-200"
+//               >
+//                 Buy Now
+//               </button>
+//             </div>
+
+//             <div className="mt-10 border-t border-gray-200 pt-8">
+//               <h2 className="text-lg font-medium mb-4">
+//                 Product Specifications
+//               </h2>
+//               <table className="w-full text-sm">
+//                 <tbody>
+//                   <tr className="border-b">
+//                     <td className="py-2 text-gray-600">Material</td>
+//                     <td className="py-2">100% genuine Italian leather</td>
+//                   </tr>
+//                   <tr className="border-b">
+//                     <td className="py-2 text-gray-600">Dimensions</td>
+//                     <td className="py-2">14" x 11" x 5"</td>
+//                   </tr>
+//                   <tr className="border-b">
+//                     <td className="py-2 text-gray-600">Weight</td>
+//                     <td className="py-2">2.5 lbs</td>
+//                   </tr>
+//                   <tr>
+//                     <td className="py-2 text-gray-600">Closure</td>
+//                     <td className="py-2">Zip-top</td>
+//                   </tr>
+//                 </tbody>
+//               </table>
+//             </div>
+
+//             <div className="mt-10 border-t border-gray-200 pt-8">
+//               <h2 className="text-lg font-medium mb-4">Seller Information</h2>
+//               <div className="flex items-center justify-between">
+//                 <div>
+//                   <p className="font-medium">{product.seller}</p>
+//                   <div className="flex items-center mt-1">
+//                     <Star className="h-4 w-4 text-yellow-400 mr-1" />
+//                     <span className="text-sm text-gray-600">
+//                       {product.sellerRating} Positive Feedback
+//                     </span>
+//                   </div>
+//                 </div>
+//                 <button className="text-primary hover:text-secondary transition-colors duration-200 flex items-center">
+//                   Visit Store <ArrowRight className="h-4 w-4 ml-1" />
+//                 </button>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+
+//         <div className="mt-16">
+//           <h2 className="text-2xl font-light mb-6">Product Description</h2>
+//           <div className="prose max-w-none">
+//             <p>{product.description}</p>
+//             <h3>Key Features:</h3>
+//             <ul>
+//               <li>Premium Italian leather construction</li>
+//               <li>Spacious main compartment with zip closure</li>
+//               <li>Interior zip pocket and two slip pockets</li>
+//               <li>Adjustable shoulder strap</li>
+//               <li>Gold-tone hardware accents</li>
+//             </ul>
+//             <p>
+//               Experience unparalleled luxury and functionality with our Elegant
+//               Leather Tote. Whether you're heading to the office or enjoying a
+//               weekend getaway, this versatile bag is the perfect companion for
+//               the modern, sophisticated individual.
+//             </p>
+//           </div>
+//         </div>
+
+//         <RelatedProducts category={product.category} />
+//       </div>
+//     </div>
+//   );
+// }
+// "use client";
+
+// import type React from "react";
+
+// import Image from "next/image";
+// import { useState } from "react";
+// import { useRouter } from "next/navigation";
+// import { Star, Truck, ArrowRight } from "lucide-react";
+// import type { Product } from "@/lib/types";
+
+// export default function ProductDetails({ product }: { product: Product }) {
+//   const [quantity, setQuantity] = useState(1);
+//   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+//   const router = useRouter();
+
+//   const allImages = [product.imageUrl, ...product.images.map((img) => img.url)];
+//   const discountPercentage = Math.round(
+//     ((product.originalPrice - product.price) / product.originalPrice) * 100
+//   );
+
+//   const handleQuantityChange = (newQuantity: number) => {
+//     setQuantity(Math.max(1, newQuantity));
+//   };
+
+//   const handleAddToCart = (e: React.MouseEvent) => {
+//     e.preventDefault();
+//     // Implement add to cart functionality
+//     console.log(`Added ${quantity} of ${product.name} to cart`);
+//   };
+
+//   const handleBuyNow = (e: React.MouseEvent) => {
+//     e.preventDefault();
+//     // Navigate to checkout with product data
+//     router.push(`/checkout?product=${product.id}`);
+//   };
+
+//   const handleImageClick = (index: number, e: React.MouseEvent) => {
+//     e.preventDefault();
+//     setCurrentImageIndex(index);
+//   };
+
+//   return (
+//     <div className="bg-white">
+//       <div className="max-w-7xl mx-auto py-8 px-4 sm:py-16 sm:px-6 lg:px-8">
+//         <div className="lg:grid lg:grid-cols-2 lg:gap-x-8 lg:items-start">
+//           {/* Image gallery */}
+//           <div className="flex flex-col">
+//             <div className="w-full aspect-w-1 aspect-h-1 mb-4">
+//               <Image
+//                 src={allImages[currentImageIndex] || "/placeholder.svg"}
+//                 alt={product.name}
+//                 className="w-full h-full object-center object-cover rounded-lg"
+//                 width={600}
+//                 height={600}
+//               />
+//             </div>
+//             <div className="flex space-x-2 overflow-x-auto">
+//               {allImages.map((img, index) => (
+//                 <button
+//                   key={index}
+//                   className={`flex-shrink-0 ${
+//                     index === currentImageIndex ? "ring-2 ring-indigo-500" : ""
+//                   }`}
+//                   onClick={(e) => handleImageClick(index, e)}
+//                 >
+//                   <Image
+//                     src={img || "/placeholder.svg"}
+//                     alt={`${product.name} - Image ${index + 1}`}
+//                     width={100}
+//                     height={100}
+//                     className="w-24 h-24 object-cover rounded-lg"
+//                   />
+//                 </button>
+//               ))}
+//             </div>
+//           </div>
+
+//           {/* Product info */}
+//           <div className="mt-10 px-4 sm:px-0 sm:mt-16 lg:mt-0">
+//             <h1 className="text-3xl font-light text-gray-900 mb-2">
+//               {product.name}
+//             </h1>
+
+//             <div className="flex items-center space-x-2 mb-4">
+//               <div className="flex items-center">
+//                 {[...Array(5)].map((_, i) => (
+//                   <Star
+//                     key={i}
+//                     className={`h-5 w-5 ${
+//                       i < Math.floor(product.rating)
+//                         ? "text-yellow-400"
+//                         : "text-gray-300"
+//                     }`}
+//                   />
+//                 ))}
+//               </div>
+//               <span className="text-sm text-gray-600">
+//                 {product.rating} ({product.reviews} reviews)
+//               </span>
+//             </div>
+
+//             <div className="flex items-baseline space-x-4 mt-4">
+//               <p className="text-3xl font-medium text-red-600">
+//                 ${product.price.toLocaleString()}
+//               </p>
+//               <p className="text-xl text-gray-500 line-through">
+//                 ${product.originalPrice.toLocaleString()}
+//               </p>
+//               <p className="text-lg font-semibold text-red-600">
+//                 -{discountPercentage}% OFF
+//               </p>
+//             </div>
+
+//             <div className="mt-6">
+//               <h3 className="sr-only">Description</h3>
+//               <p className="text-base text-gray-900">{product.description}</p>
+//             </div>
+
+//             <div className="mt-8 bg-gray-100 p-4 rounded-lg">
+//               <div className="flex items-center space-x-2 mb-2">
+//                 <Truck className="h-5 w-5 text-gray-600" />
+//                 <span className="font-medium">Free Shipping</span>
+//               </div>
+//               <p className="text-sm text-gray-600">
+//                 Estimated delivery: 3-5 business days
+//               </p>
+//             </div>
+
+//             <div className="mt-8">
+//               <h3 className="text-sm font-medium text-gray-900">Color</h3>
+//               <div className="mt-2 flex items-center space-x-3">
+//                 {product.colors.map((color) => (
+//                   <button
+//                     key={color}
+//                     className={`w-8 h-8 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900`}
+//                     style={{ backgroundColor: color }}
+//                   />
+//                 ))}
+//               </div>
+//             </div>
+
+//             <div className="mt-8">
+//               <h3 className="text-sm font-medium text-gray-900">Size</h3>
+//               <div className="mt-2 flex items-center space-x-3">
+//                 {product.sizes.map((size) => (
+//                   <button
+//                     key={size}
+//                     className="px-3 py-2 border rounded-md text-sm font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+//                   >
+//                     {size}
+//                   </button>
+//                 ))}
+//               </div>
+//             </div>
+
+//             <div className="mt-8">
+//               <label
+//                 htmlFor="quantity"
+//                 className="text-sm font-medium text-gray-700"
+//               >
+//                 Quantity
+//               </label>
+//               <div className="flex items-center mt-1">
+//                 <button
+//                   onClick={(e) => {
+//                     e.preventDefault();
+//                     handleQuantityChange(quantity - 1);
+//                   }}
+//                   className="px-3 py-1 border rounded-l-md"
+//                 >
+//                   -
+//                 </button>
+//                 <input
+//                   type="number"
+//                   id="quantity"
+//                   name="quantity"
+//                   min="1"
+//                   value={quantity}
+//                   onChange={(e) => handleQuantityChange(Number(e.target.value))}
+//                   className="w-16 text-center border-t border-b"
+//                 />
+//                 <button
+//                   onClick={(e) => {
+//                     e.preventDefault();
+//                     handleQuantityChange(quantity + 1);
+//                   }}
+//                   className="px-3 py-1 border rounded-r-md"
+//                 >
+//                   +
+//                 </button>
+//               </div>
+//             </div>
+
+//             <div className="mt-10 flex space-x-4">
+//               <button
+//                 onClick={handleAddToCart}
+//                 className="flex-1 bg-gray-900 text-white py-3 px-8 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+//               >
+//                 Add to Cart
+//               </button>
+//               <button
+//                 onClick={handleBuyNow}
+//                 className="flex-1 bg-red-600 text-white py-3 px-8 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+//               >
+//                 Buy Now
+//               </button>
+//             </div>
+
+//             {/* <div className="mt-10 border-t border-gray-200 pt-8">
+//               <h2 className="text-lg font-medium mb-4">
+//                 Product Specifications
+//               </h2>
+//               <table className="w-full text-sm">
+//                 <tbody>
+//                   <tr className="border-b">
+//                     <td className="py-2 text-gray-600">Material</td>
+//                     <td className="py-2">100% genuine Italian leather</td>
+//                   </tr>
+//                   <tr className="border-b">
+//                     <td className="py-2 text-gray-600">Dimensions</td>
+//                     <td className="py-2">14" x 11" x 5"</td>
+//                   </tr>
+//                   <tr className="border-b">
+//                     <td className="py-2 text-gray-600">Weight</td>
+//                     <td className="py-2">2.5 lbs</td>
+//                   </tr>
+//                   <tr>
+//                     <td className="py-2 text-gray-600">Closure</td>
+//                     <td className="py-2">Zip-top</td>
+//                   </tr>
+//                 </tbody>
+//               </table>
+//             </div> */}
+
+//             {/* <div className="mt-10 border-t border-gray-200 pt-8">
+//               <h2 className="text-lg font-medium mb-4">Seller Information</h2>
+//               <div className="flex items-center justify-between">
+//                 <div>
+//                   <p className="font-medium">{product.seller}</p>
+//                   <div className="flex items-center mt-1">
+//                     <Star className="h-4 w-4 text-yellow-400 mr-1" />
+//                     <span className="text-sm text-gray-600">
+//                       {product.sellerRating} Positive Feedback
+//                     </span>
+//                   </div>
+//                 </div>
+//                 <button className="text-indigo-600 hover:text-indigo-900 transition-colors duration-200 flex items-center">
+//                   Visit Store <ArrowRight className="h-4 w-4 ml-1" />
+//                 </button>
+//               </div>
+//             </div> */}
+//           </div>
+//         </div>
+
+//         {/* <div className="mt-16">
+//           <h2 className="text-2xl font-light mb-6">Product Description</h2>
+//           <div className="prose max-w-none">
+//             <p>{product.description}</p>
+//             <h3>Key Features:</h3>
+//             <ul>
+//               <li>Premium Italian leather construction</li>
+//               <li>Spacious main compartment with zip closure</li>
+//               <li>Interior zip pocket and two slip pockets</li>
+//               <li>Adjustable shoulder strap</li>
+//               <li>Gold-tone hardware accents</li>
+//             </ul>
+//             <p>
+//               Experience unparalleled luxury and functionality with our Elegant
+//               Leather Tote. Whether you're heading to the office or enjoying a
+//               weekend getaway, this versatile bag is the perfect companion for
+//               the modern, sophisticated individual.
+//             </p>
+//           </div>
+//         </div> */}
+//       </div>
+//     </div>
+//   );
+// }
+
+// "use client";
+
+// import type React from "react";
+// import Image from "next/image";
+// import { useState } from "react";
+// import { useRouter } from "next/navigation";
+// import { Star, Truck, ArrowRight } from "lucide-react";
+// import type { Product } from "@/lib/types";
+// import { useCart } from "@/app/contexts/CartContext";
+
+// export default function ProductDetails({ product }: { product: Product }) {
+//   const [quantity, setQuantity] = useState(1);
+//   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+//   const router = useRouter();
+//   const { addItem } = useCart();
+
+//   const allImages = [product.imageUrl, ...product.images.map((img) => img.url)];
+//   const discountPercentage = Math.round(
+//     ((product.originalPrice - product.price) / product.originalPrice) * 100
+//   );
+
+//   const handleQuantityChange = (newQuantity: number) => {
+//     setQuantity(Math.max(1, newQuantity));
+//   };
+
+//   const handleAddToCart = (e: React.MouseEvent) => {
+//     e.preventDefault();
+//     addItem({
+//       id: product.id,
+//       name: product.name,
+//       price: product.price,
+//       quantity: quantity,
+//       imageUrl: product.imageUrl,
+//     });
+//     // Optionally, you can show a confirmation message or open the cart drawer here
+//   };
+
+//   const handleBuyNow = (e: React.MouseEvent) => {
+//     e.preventDefault();
+//     // First, add the item to the cart
+//     addItem({
+//       id: product.id,
+//       name: product.name,
+//       price: product.price,
+//       quantity: quantity,
+//       imageUrl: product.imageUrl,
+//     });
+//     // Then, navigate to checkout
+//     router.push("/checkout");
+//   };
+
+//   const handleImageClick = (index: number, e: React.MouseEvent) => {
+//     e.preventDefault();
+//     setCurrentImageIndex(index);
+//   };
+
+//   return (
+//     <div className="bg-white">
+//       <div className="max-w-7xl mx-auto py-8 px-4 sm:py-16 sm:px-6 lg:px-8">
+//         <div className="lg:grid lg:grid-cols-2 lg:gap-x-8 lg:items-start">
+//           {/* Image gallery */}
+//           <div className="flex flex-col">
+//             <div className="w-full aspect-w-1 aspect-h-1 mb-4">
+//               <Image
+//                 src={allImages[currentImageIndex] || "/placeholder.svg"}
+//                 alt={product.name}
+//                 className="w-full h-full object-center object-cover rounded-lg"
+//                 width={600}
+//                 height={600}
+//               />
+//             </div>
+//             <div className="flex space-x-2 overflow-x-auto">
+//               {allImages.map((img, index) => (
+//                 <button
+//                   key={index}
+//                   className={`flex-shrink-0 ${
+//                     index === currentImageIndex ? "ring-2 ring-indigo-500" : ""
+//                   }`}
+//                   onClick={(e) => handleImageClick(index, e)}
+//                 >
+//                   <Image
+//                     src={img || "/placeholder.svg"}
+//                     alt={`${product.name} - Image ${index + 1}`}
+//                     width={100}
+//                     height={100}
+//                     className="w-24 h-24 object-cover rounded-lg"
+//                   />
+//                 </button>
+//               ))}
+//             </div>
+//           </div>
+
+//           {/* Product info */}
+//           <div className="mt-10 px-4 sm:px-0 sm:mt-16 lg:mt-0">
+//             <h1 className="text-3xl font-light text-gray-900 mb-2">
+//               {product.name}
+//             </h1>
+
+//             <div className="flex items-center space-x-2 mb-4">
+//               <div className="flex items-center">
+//                 {[...Array(5)].map((_, i) => (
+//                   <Star
+//                     key={i}
+//                     className={`h-5 w-5 ${
+//                       i < Math.floor(product.rating)
+//                         ? "text-yellow-400"
+//                         : "text-gray-300"
+//                     }`}
+//                   />
+//                 ))}
+//               </div>
+//               <span className="text-sm text-gray-600">
+//                 {product.rating} ({product.reviews} reviews)
+//               </span>
+//             </div>
+
+//             <div className="flex items-baseline space-x-4 mt-4">
+//               <p className="text-3xl font-medium text-red-600">
+//                 ${product.price.toLocaleString()}
+//               </p>
+//               <p className="text-xl text-gray-500 line-through">
+//                 ${product.originalPrice.toLocaleString()}
+//               </p>
+//               <p className="text-lg font-semibold text-red-600">
+//                 -{discountPercentage}% OFF
+//               </p>
+//             </div>
+
+//             <div className="mt-6">
+//               <h3 className="sr-only">Description</h3>
+//               <p className="text-base text-gray-900">{product.description}</p>
+//             </div>
+
+//             <div className="mt-8 bg-gray-100 p-4 rounded-lg">
+//               <div className="flex items-center space-x-2 mb-2">
+//                 <Truck className="h-5 w-5 text-gray-600" />
+//                 <span className="font-medium">Free Shipping</span>
+//               </div>
+//               <p className="text-sm text-gray-600">
+//                 Estimated delivery: 3-5 business days
+//               </p>
+//             </div>
+
+//             <div className="mt-8">
+//               <h3 className="text-sm font-medium text-gray-900">Color</h3>
+//               <div className="mt-2 flex items-center space-x-3">
+//                 {product.colors.map((color) => (
+//                   <button
+//                     key={color}
+//                     className={`w-8 h-8 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900`}
+//                     style={{ backgroundColor: color }}
+//                   />
+//                 ))}
+//               </div>
+//             </div>
+
+//             <div className="mt-8">
+//               <h3 className="text-sm font-medium text-gray-900">Size</h3>
+//               <div className="mt-2 flex items-center space-x-3">
+//                 {product.sizes.map((size) => (
+//                   <button
+//                     key={size}
+//                     className="px-3 py-2 border rounded-md text-sm font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+//                   >
+//                     {size}
+//                   </button>
+//                 ))}
+//               </div>
+//             </div>
+
+//             <div className="mt-8">
+//               <label
+//                 htmlFor="quantity"
+//                 className="text-sm font-medium text-gray-700"
+//               >
+//                 Quantity
+//               </label>
+//               <div className="flex items-center mt-1">
+//                 <button
+//                   onClick={(e) => {
+//                     e.preventDefault();
+//                     handleQuantityChange(quantity - 1);
+//                   }}
+//                   className="px-3 py-1 border rounded-l-md"
+//                 >
+//                   -
+//                 </button>
+//                 <input
+//                   type="number"
+//                   id="quantity"
+//                   name="quantity"
+//                   min="1"
+//                   value={quantity}
+//                   onChange={(e) => handleQuantityChange(Number(e.target.value))}
+//                   className="w-16 text-center border-t border-b"
+//                 />
+//                 <button
+//                   onClick={(e) => {
+//                     e.preventDefault();
+//                     handleQuantityChange(quantity + 1);
+//                   }}
+//                   className="px-3 py-1 border rounded-r-md"
+//                 >
+//                   +
+//                 </button>
+//               </div>
+//             </div>
+
+//             <div className="mt-10 flex space-x-4">
+//               <button
+//                 onClick={handleAddToCart}
+//                 className="flex-1 bg-gray-900 text-white py-3 px-8 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+//               >
+//                 Add to Cart
+//               </button>
+//               <button
+//                 onClick={handleBuyNow}
+//                 className="flex-1 bg-red-600 text-white py-3 px-8 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+//               >
+//                 Buy Now
+//               </button>
+//             </div>
+
+//             {/* <div className="mt-10 border-t border-gray-200 pt-8">
+//               <h2 className="text-lg font-medium mb-4">
+//                 Product Specifications
+//               </h2>
+//               <table className="w-full text-sm">
+//                 <tbody>
+//                   <tr className="border-b">
+//                     <td className="py-2 text-gray-600">Material</td>
+//                     <td className="py-2">100% genuine Italian leather</td>
+//                   </tr>
+//                   <tr className="border-b">
+//                     <td className="py-2 text-gray-600">Dimensions</td>
+//                     <td className="py-2">14" x 11" x 5"</td>
+//                   </tr>
+//                   <tr className="border-b">
+//                     <td className="py-2 text-gray-600">Weight</td>
+//                     <td className="py-2">2.5 lbs</td>
+//                   </tr>
+//                   <tr>
+//                     <td className="py-2 text-gray-600">Closure</td>
+//                     <td className="py-2">Zip-top</td>
+//                   </tr>
+//                 </tbody>
+//               </table>
+//             </div> */}
+
+//             {/* <div className="mt-10 border-t border-gray-200 pt-8">
+//               <h2 className="text-lg font-medium mb-4">Seller Information</h2>
+//               <div className="flex items-center justify-between">
+//                 <div>
+//                   <p className="font-medium">{product.seller}</p>
+//                   <div className="flex items-center mt-1">
+//                     <Star className="h-4 w-4 text-yellow-400 mr-1" />
+//                     <span className="text-sm text-gray-600">
+//                       {product.sellerRating} Positive Feedback
+//                     </span>
+//                   </div>
+//                 </div>
+//                 <button className="text-indigo-600 hover:text-indigo-900 transition-colors duration-200 flex items-center">
+//                   Visit Store <ArrowRight className="h-4 w-4 ml-1" />
+//                 </button>
+//               </div>
+//             </div> */}
+//           </div>
+//         </div>
+
+//         {/* <div className="mt-16">
+//           <h2 className="text-2xl font-light mb-6">Product Description</h2>
+//           <div className="prose max-w-none">
+//             <p>{product.description}</p>
+//             <h3>Key Features:</h3>
+//             <ul>
+//               <li>Premium Italian leather construction</li>
+//               <li>Spacious main compartment with zip closure</li>
+//               <li>Interior zip pocket and two slip pockets</li>
+//               <li>Adjustable shoulder strap</li>
+//               <li>Gold-tone hardware accents</li>
+//             </ul>
+//             <p>
+//               Experience unparalleled luxury and functionality with our Elegant
+//               Leather Tote. Whether you're heading to the office or enjoying a
+//               weekend getaway, this versatile bag is the perfect companion for
+//               the modern, sophisticated individual.
+//             </p>
+//           </div>
+//         </div> */}
+//       </div>
+//     </div>
+//   );
+// }
+
 "use client";
 
+import type React from "react";
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Star, Truck, ArrowRight } from "lucide-react";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import type { Product } from "@/lib/types";
-import ColorSelector from "../../components/ColorSelector";
-import SizeSelector from "../../components/SizeSelector";
-import AddToCartButton from "../../components/AddToCartButton";
-import RelatedProducts from "../../components/RelatedProducts";
+import { useCart } from "@/app/contexts/CartContext";
 
 export default function ProductDetails({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1);
-  const [mainImage, setMainImage] = useState(product.imageUrl);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const router = useRouter();
+  const { addItem } = useCart();
 
+  const allImages = [product.imageUrl, ...product.images.map((img) => img.url)];
   const discountPercentage = Math.round(
     ((product.originalPrice - product.price) / product.originalPrice) * 100
   );
 
-  const handleAddToCart = () => {
-    // Implement add to cart functionality
-    console.log(`Added ${quantity} of ${product.name} to cart`);
+  const handleQuantityChange = (newQuantity: number) => {
+    setQuantity(Math.max(1, newQuantity));
   };
 
-  const handleBuyNow = () => {
-    // Navigate to checkout with product data
-    router.push(`/checkout?product=${product.id}`);
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      quantity: quantity,
+      imageUrl: product.imageUrl,
+    });
   };
 
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 1,
-        },
-      },
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-        },
-      },
-    ],
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.preventDefault();
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      quantity: quantity,
+      imageUrl: product.imageUrl,
+    });
+    router.push("/checkout");
+  };
+
+  const handleImageClick = (index: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    setCurrentImageIndex(index);
   };
 
   return (
@@ -266,27 +1369,32 @@ export default function ProductDetails({ product }: { product: Product }) {
           <div className="flex flex-col">
             <div className="w-full aspect-w-1 aspect-h-1 mb-4">
               <Image
-                src={mainImage || "/placeholder.svg"}
+                src={allImages[currentImageIndex] || "/placeholder.svg"}
                 alt={product.name}
                 className="w-full h-full object-center object-cover rounded-lg"
                 width={600}
                 height={600}
               />
             </div>
-            <Slider {...settings}>
-              {product.images.map((img, index) => (
-                <div key={index} className="px-2">
+            <div className="flex space-x-2 overflow-x-auto">
+              {allImages.map((img, index) => (
+                <button
+                  key={index}
+                  className={`flex-shrink-0 ${
+                    index === currentImageIndex ? "ring-2 ring-indigo-500" : ""
+                  }`}
+                  onClick={(e) => handleImageClick(index, e)}
+                >
                   <Image
                     src={img || "/placeholder.svg"}
                     alt={`${product.name} - Image ${index + 1}`}
                     width={100}
                     height={100}
-                    className="w-full h-24 object-cover rounded-lg cursor-pointer"
-                    onClick={() => setMainImage(img)}
+                    className="w-24 h-24 object-cover rounded-lg"
                   />
-                </div>
+                </button>
               ))}
-            </Slider>
+            </div>
           </div>
 
           {/* Product info */}
@@ -315,10 +1423,10 @@ export default function ProductDetails({ product }: { product: Product }) {
 
             <div className="flex items-baseline space-x-4 mt-4">
               <p className="text-3xl font-medium text-red-600">
-                ${product.price.toLocaleString()}
+                {product.price.toLocaleString()} MAD
               </p>
               <p className="text-xl text-gray-500 line-through">
-                ${product.originalPrice.toLocaleString()}
+                {product.originalPrice.toLocaleString()}MAD
               </p>
               <p className="text-lg font-semibold text-red-600">
                 -{discountPercentage}% OFF
@@ -341,11 +1449,33 @@ export default function ProductDetails({ product }: { product: Product }) {
             </div>
 
             <div className="mt-8">
-              <ColorSelector colors={product.colors} />
+              <h3 className="text-sm font-medium text-gray-900">Color</h3>
+              <div className="mt-2 flex items-center space-x-3">
+                {/* {product.colors.map((color) => (
+                  <button
+                    key={color}
+                    className={`w-8 h-8 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900`}
+                    style={{ backgroundColor: color }}
+                  />
+                ))} */}
+                <button
+                  className="w-8 h-8 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                  style={{ backgroundColor: product.color }} // Directly use the string
+                />
+
+                {/* {product.color} */}
+              </div>
             </div>
 
             <div className="mt-8">
-              <SizeSelector sizes={product.sizes} />
+              <h3 className="text-sm font-medium text-gray-900">Size</h3>
+              <div className="mt-2 flex items-center space-x-3">
+                {/* {product.size.map((size) => ( */}
+                <button className="px-3 py-2 border rounded-md text-sm font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">
+                  {product.size}
+                </button>
+                {/* ))} */}
+              </div>
             </div>
 
             <div className="mt-8">
@@ -357,7 +1487,10 @@ export default function ProductDetails({ product }: { product: Product }) {
               </label>
               <div className="flex items-center mt-1">
                 <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleQuantityChange(quantity - 1);
+                  }}
                   className="px-3 py-1 border rounded-l-md"
                 >
                   -
@@ -368,13 +1501,14 @@ export default function ProductDetails({ product }: { product: Product }) {
                   name="quantity"
                   min="1"
                   value={quantity}
-                  onChange={(e) =>
-                    setQuantity(Math.max(1, Number.parseInt(e.target.value)))
-                  }
+                  onChange={(e) => handleQuantityChange(Number(e.target.value))}
                   className="w-16 text-center border-t border-b"
                 />
                 <button
-                  onClick={() => setQuantity(quantity + 1)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleQuantityChange(quantity + 1);
+                  }}
                   className="px-3 py-1 border rounded-r-md"
                 >
                   +
@@ -383,16 +1517,21 @@ export default function ProductDetails({ product }: { product: Product }) {
             </div>
 
             <div className="mt-10 flex space-x-4">
-              <AddToCartButton onClick={handleAddToCart} />
+              <button
+                onClick={handleAddToCart}
+                className="flex-1 bg-gray-900 text-white py-3 px-8 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+              >
+                Add to Cart
+              </button>
               <button
                 onClick={handleBuyNow}
-                className="flex-1 bg-red-600 text-white py-3 px-8 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-200"
+                className="flex-1 bg-red-600 text-white py-3 px-8 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
               >
                 Buy Now
               </button>
             </div>
 
-            <div className="mt-10 border-t border-gray-200 pt-8">
+            {/* <div className="mt-10 border-t border-gray-200 pt-8">
               <h2 className="text-lg font-medium mb-4">
                 Product Specifications
               </h2>
@@ -416,7 +1555,7 @@ export default function ProductDetails({ product }: { product: Product }) {
                   </tr>
                 </tbody>
               </table>
-            </div>
+            </div> */}
 
             {/* <div className="mt-10 border-t border-gray-200 pt-8">
               <h2 className="text-lg font-medium mb-4">Seller Information</h2>
@@ -430,7 +1569,7 @@ export default function ProductDetails({ product }: { product: Product }) {
                     </span>
                   </div>
                 </div>
-                <button className="text-primary hover:text-secondary transition-colors duration-200 flex items-center">
+                <button className="text-indigo-600 hover:text-indigo-900 transition-colors duration-200 flex items-center">
                   Visit Store <ArrowRight className="h-4 w-4 ml-1" />
                 </button>
               </div>
@@ -458,8 +1597,6 @@ export default function ProductDetails({ product }: { product: Product }) {
             </p>
           </div>
         </div> */}
-
-        <RelatedProducts category={product.category} />
       </div>
     </div>
   );

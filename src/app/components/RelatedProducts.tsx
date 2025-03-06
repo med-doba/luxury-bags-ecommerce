@@ -46,7 +46,7 @@ export default function RelatedProducts({ category }: RelatedProductsProps) {
               {product.name}
             </h3>
             <p className="mt-1 text-lg font-light text-gray-900">
-              ${product.price.toLocaleString()}
+              {product.price.toLocaleString()} MAD
             </p>
           </Link>
         ))}

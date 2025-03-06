@@ -42,7 +42,7 @@ export default function FeaturedCollections() {
             href="/shop"
             className="text-sm font-medium text-primary hover:text-secondary transition-colors duration-300"
           >
-            View All
+            Voir tout
           </Link>
         </div>
         <div className="border-b border-accent mb-8"></div>
@@ -65,7 +65,7 @@ export default function FeaturedCollections() {
               <div className="mt-4 space-y-1">
                 <h3 className="text-sm text-text">{product.name}</h3>
                 <p className="text-lg font-medium text-primary">
-                  ${parseFloat(product.price).toFixed(2)}
+                  {parseFloat(product.price).toFixed(2)} MAD
                 </p>
               </div>
             </Link>
@@ -77,7 +77,7 @@ export default function FeaturedCollections() {
               onClick={loadMore}
               className="inline-block bg-primary text-white py-2 px-6 border border-transparent rounded-md text-sm font-medium hover:bg-secondary transition-colors duration-300"
             >
-              Load More
+              Charger plus
             </button>
           </div>
         )}

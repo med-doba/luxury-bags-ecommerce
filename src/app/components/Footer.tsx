@@ -6,7 +6,7 @@ export default function Footer() {
     <footer className="bg-gray-100">
       <div className="container mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
         <div>
-          <h3 className="text-lg font-semibold mb-4">Categories</h3>
+          <h3 className="text-lg font-semibold mb-4">Catégories</h3>
           <ul className="space-y-2">
             <li>
               <Link
@@ -38,7 +38,7 @@ export default function Footer() {
           </ul>
         </div>
         <div>
-          <h3 className="text-lg font-semibold mb-4">Customer Support</h3>
+          <h3 className="text-lg font-semibold mb-4">Service client</h3>
           <ul className="space-y-2">
             <li>
               <Link href="/faq" className="text-gray-600 hover:text-gray-800">
@@ -50,7 +50,7 @@ export default function Footer() {
                 href="/shipping"
                 className="text-gray-600 hover:text-gray-800"
               >
-                Shipping
+                Livraison
               </Link>
             </li>
             <li>
@@ -64,7 +64,7 @@ export default function Footer() {
           </ul>
         </div>
         <div>
-          <h3 className="text-lg font-semibold mb-4">About Us</h3>
+          <h3 className="text-lg font-semibold mb-4">À propos de nous</h3>
           <ul className="space-y-2">
             <li>
               <Link
@@ -93,7 +93,7 @@ export default function Footer() {
           </ul>
         </div>
         <div>
-          <h3 className="text-lg font-semibold mb-4">Stay Connected</h3>
+          <h3 className="text-lg font-semibold mb-4">Restez connecté</h3>
           <Newsletter />
           <div className="flex space-x-4 mt-4">
             <a href="#" className="text-gray-400 hover:text-gray-600">
@@ -142,7 +142,7 @@ export default function Footer() {
       </div>
       <div className="border-t border-gray-200 py-6">
         <p className="text-center text-gray-500 text-sm">
-          &copy; 2025 Moi&Toi. All rights reserved.
+          &copy; 2025 MoiéToi. All rights reserved.
         </p>
       </div>
     </footer>

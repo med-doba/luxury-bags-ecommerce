@@ -4,7 +4,7 @@ import CategorySection from "./CategorySection";
 export default async function CategorySectionWrapper() {
   try {
     const categories = await getCategories();
-    console.log("CategorySectionWrapper categories:", categories);
+    // console.log("CategorySectionWrapper categories:", categories);
 
     if (!categories || categories.length === 0) {
       return <div className="text-center py-10">No categories found.</div>;

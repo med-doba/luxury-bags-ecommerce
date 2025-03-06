@@ -7,7 +7,7 @@
 // const inter = Inter({ subsets: ["latin"] });
 
 // export const metadata: Metadata = {
-//   title: "Moi&Toi - Where Art Meets Functionality",
+//   title: "MoiéToi - Where Art Meets Functionality",
 //   description:
 //     "Discover our exquisite collection of handcrafted luxury bags, where timeless elegance meets modern design.",
 // };
@@ -27,6 +27,38 @@
 //           {children}
 //         </main>
 //         <Footer />
+//       </body>
+//     </html>
+//   );
+// }
+
+// import type React from "react";
+// import { Inter } from "next/font/google";
+// import { CartProvider } from "./contexts/CartContext";
+// import Header from "./components/Header";
+// import Footer from "./components/Footer";
+// import "./globals.css";
+
+// const inter = Inter({ subsets: ["latin"] });
+
+// export const metadata = {
+//   title: "Luxury Bags E-commerce",
+//   description: "Shop for luxury bags and accessories",
+// };
+
+// export default function RootLayout({
+//   children,
+// }: {
+//   children: React.ReactNode;
+// }) {
+//   return (
+//     <html lang="en">
+//       <body className={inter.className}>
+//         <CartProvider>
+//           <Header />
+//           <main>{children}</main>
+//           <Footer />
+//         </CartProvider>
 //       </body>
 //     </html>
 //   );
@@ -53,7 +85,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning>
         <CartProvider>
           <Header />
           <main>{children}</main>

@@ -6,11 +6,13 @@ import CategorySection from "./components/CategorySection";
 // import Testimonials from "./components/Testimonials";
 import VideoSection from "./components/VideoSection";
 import CategorySectionWrapper from "./components/CategorySectionWrapper";
+import HeroWrapper from "./components/HeroWrapper";
 
 export default function Home() {
   return (
     <main>
-      <Hero />
+      {/* <Hero /> */}
+      <HeroWrapper />
       <FeaturedCollections />
       {/* <CategorySection /> */}
       <CategorySectionWrapper />

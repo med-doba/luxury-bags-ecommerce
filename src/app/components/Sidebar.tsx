@@ -1,7 +1,7 @@
 // src/app/components/Sidebar.tsx
 
-import Link from 'next/link';
-import { X } from 'lucide-react';
+import Link from "next/link";
+import { X } from "lucide-react";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -12,7 +12,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   return (
     <div
       className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${
-        isOpen ? 'translate-x-0' : '-translate-x-full'
+        isOpen ? "translate-x-0" : "-translate-x-full"
       }`}
     >
       <div className="p-4">
@@ -21,11 +21,26 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         </button>
         <nav className="mt-8">
           <ul className="space-y-4">
-            <li><Link href="/shop/women" className="text-lg font-semibold">Shop Women</Link></li>
-            <li><Link href="/shop/men" className="text-lg font-semibold">Shop Men</Link></li>
-            <li><Link href="/accessories" className="text-lg font-semibold">Accessories</Link></li>
-            <li><Link href="/new-arrivals" className="text-lg font-semibold">New Arrivals</Link></li>
-            <li><Link href="/contact" className="text-lg font-semibold">Contact Us</Link></li>
+            <li>
+              <Link href="/shop/brands" className="text-lg font-semibold">
+                Marques
+              </Link>
+            </li>
+            <li>
+              <Link href="/accessories" className="text-lg font-semibold">
+                Nouvelle Collection
+              </Link>
+            </li>
+            <li>
+              <Link href="/claim" className="text-lg font-semibold">
+                Réclamation
+              </Link>
+            </li>
+            <li>
+              <Link href="/contact" className="text-lg font-semibold">
+                Contactez-nous
+              </Link>
+            </li>
           </ul>
         </nav>
       </div>

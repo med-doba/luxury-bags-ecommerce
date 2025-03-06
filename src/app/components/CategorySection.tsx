@@ -176,13 +176,13 @@ interface CategorySectionProps {
 export default function CategorySection({
   categories = [],
 }: CategorySectionProps) {
-  console.log("CategorySection received categories:", categories);
+  // console.log("CategorySection received categories:", categories);
 
   return (
     <section className="bg-background py-16 sm:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-extrabold text-primary mb-6">
-          Shop by Category
+          Acheter par catégorie
         </h2>
         <div className="border-b border-accent mb-10"></div>
         <div className="grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:gap-x-8">
@@ -231,7 +231,7 @@ function CategoryCard({ category }: { category: Category }) {
       </div>
       <div className="mt-4">
         <button className="text-primary hover:text-secondary transition-colors duration-300">
-          Shop Now
+          Acheter
         </button>
       </div>
     </Link>

@@ -231,6 +231,152 @@
 
 //   return <ProductDetails product={product} />;
 // }
+// import { notFound } from "next/navigation";
+// import prisma from "@/lib/prisma";
+// import ProductDetails from "./ProductDetails";
+
+// async function getProduct(id: string) {
+//   const product = await prisma.product.findUnique({
+//     where: { id },
+//     include: { category: true },
+//   });
+
+//   if (!product) {
+//     notFound();
+//   }
+
+//   // Simulating additional product data
+//   const enhancedProduct = {
+//     ...product,
+//     originalPrice: product.price * 1.2, // 20% higher than the current price
+//     images: [
+//       product.imageUrl,
+//       "/images/1.jpg",
+//       "/placeholder.svg",
+//       "/placeholder.svg",
+//     ],
+//     colors: ["black", "brown", "navy"],
+//     sizes: ["small", "medium", "large"],
+//     rating: 4.8,
+//     reviews: 256,
+//     seller: "Luxury Bags Co.",
+//     sellerRating: 4.9,
+//   };
+
+//   return enhancedProduct;
+// }
+
+// export default async function ProductPage({
+//   params,
+// }: {
+//   params: { productId: string };
+// }) {
+//   const product = await getProduct(params.productId);
+
+//   return <ProductDetails product={product} />;
+// }
+
+// import { notFound } from "next/navigation";
+// import prisma from "@/lib/prisma";
+// import ProductDetails from "./ProductDetails";
+
+// async function getProduct(id: string) {
+//   const product = await prisma.product.findUnique({
+//     where: { id },
+//     include: { category: true },
+//   });
+
+//   if (!product) {
+//     notFound();
+//   }
+
+//   return product;
+// }
+
+// export default async function ProductPage({
+//   params,
+// }: {
+//   params: { productId: string };
+// }) {
+//   const product = await getProduct(params.productId);
+
+//   return <ProductDetails product={product} />;
+// }
+
+// import { notFound } from "next/navigation";
+// import prisma from "@/lib/prisma";
+// import ProductDetails from "./ProductDetails";
+
+// async function getProduct(id: string) {
+//   const product = await prisma.product.findUnique({
+//     where: { id },
+//     include: {
+//       category: true,
+//       images: true,
+//     },
+//   });
+
+//   if (!product) {
+//     notFound();
+//   }
+
+//   // Convert Decimal to number
+//   const serializedProduct = {
+//     ...product,
+//     price: product.price.toNumber(),
+//     images: product.images || [],
+//   };
+
+//   return serializedProduct;
+// }
+
+// export default async function ProductPage({
+//   params,
+// }: {
+//   params: { productId: string };
+// }) {
+//   const product = await getProduct(params.productId);
+
+//   return <ProductDetails product={product} />;
+// }
+
+// import { notFound } from "next/navigation";
+// import prisma from "@/lib/prisma";
+// import ProductDetails from "./ProductDetails";
+
+// async function getProduct(id: string) {
+//   const product = await prisma.product.findUnique({
+//     where: { id },
+//     include: {
+//       category: true,
+//       images: true,
+//     },
+//   });
+
+//   if (!product) {
+//     notFound();
+//   }
+
+//   // Convert Decimal to number
+//   const serializedProduct = {
+//     ...product,
+//     price: product.price.toNumber(),
+//     images: product.images || [],
+//   };
+
+//   return serializedProduct;
+// }
+
+// export default async function ProductPage({
+//   params,
+// }: {
+//   params: { productId: string };
+// }) {
+//   const product = await getProduct(params.productId);
+
+//   return <ProductDetails product={product} />;
+// }
+
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import ProductDetails from "./ProductDetails";
@@ -238,32 +384,32 @@ import ProductDetails from "./ProductDetails";
 async function getProduct(id: string) {
   const product = await prisma.product.findUnique({
     where: { id },
-    include: { category: true },
+    include: {
+      category: true,
+      images: true,
+    },
   });
 
   if (!product) {
     notFound();
   }
 
-  // Simulating additional product data
-  const enhancedProduct = {
+  // Convert Decimal to number and ensure all required fields are present
+  const serializedProduct = {
     ...product,
-    originalPrice: product.price * 1.2, // 20% higher than the current price
-    images: [
-      product.imageUrl,
-      "/placeholder.svg",
-      "/placeholder.svg",
-      "/placeholder.svg",
-    ],
-    colors: ["black", "brown", "navy"],
-    sizes: ["small", "medium", "large"],
-    rating: 4.8,
-    reviews: 256,
-    seller: "Luxury Bags Co.",
-    sellerRating: 4.9,
+    price: product.price.toNumber(),
+    originalPrice:
+      product.originalPrice?.toNumber() || product.price.toNumber(),
+    images: product.images || [],
+    rating: product.rating || 0,
+    reviews: product.reviews || 0,
+    colors: product.colors || [],
+    sizes: product.sizes || [],
+    seller: product.seller || "Unknown Seller",
+    sellerRating: product.sellerRating || 0,
   };
 
-  return enhancedProduct;
+  return serializedProduct;
 }
 
 export default async function ProductPage({
