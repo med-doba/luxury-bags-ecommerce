@@ -10,7 +10,7 @@ export default async function handler(
       const products = await prisma.product.findMany();
       res.status(200).json(products);
     } catch (error) {
-      res.status(500).json({ error: "Error fetching products" });
+      res.status(500).json({ error: `Error fetching products ${error}` });
     }
   } else {
     res.setHeader("Allow", ["GET"]);

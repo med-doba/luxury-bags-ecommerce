@@ -2,13 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
-interface NewCollection {
-  id: string;
-  name: string;
-  imageUrl: string;
-  description: string;
-  releaseDate: string;
-}
+// interface NewCollection {
+//   id: string;
+//   name: string;
+//   imageUrl: string;
+//   description: string;
+//   releaseDate: string;
+// }
 
 // This is a server component that fetches new collection data
 async function getNewCollections() {
@@ -58,10 +58,15 @@ export default async function NouvelleCollectionPage() {
         <h1 className="text-4xl font-bold text-primary mb-8">
           Nouvelle Collection
         </h1>
-        <p className="text-lg text-text mb-12 max-w-3xl">
+        {/* <p className="text-lg text-text mb-12 max-w-3xl">
           Découvrez nos dernières créations, où l'élégance rencontre
           l'innovation. Chaque pièce de notre nouvelle collection incarne notre
           engagement envers l'excellence et le raffinement.
+        </p> */}
+        <p className="text-lg text-text mb-12 max-w-3xl">
+          Découvrez nos dernières créations, où l&apos;élégance rencontre
+          l&apos;innovation. Chaque pièce de notre nouvelle collection incarne
+          notre engagement envers l&apos;excellence et le raffinement.
         </p>
 
         {collections.map((collection, index) => (

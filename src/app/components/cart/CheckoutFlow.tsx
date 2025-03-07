@@ -91,7 +91,7 @@ export default function CheckoutFlow({
     invoiceContent += "CUSTOMER INFORMATION\n";
     invoiceContent += `${shippingInfo.firstName} ${shippingInfo.lastName}\n`;
     invoiceContent += `${shippingInfo.address}\n`;
-    invoiceContent += `${shippingInfo.city}, ${shippingInfo.postalCode}\n`;
+    // invoiceContent += `${shippingInfo.city}, ${shippingInfo.postalCode}\n`;
     // invoiceContent += `${shippingInfo.country}\n`;
     invoiceContent += `${shippingInfo.phone}\n`;
     invoiceContent += `${email}\n\n`;

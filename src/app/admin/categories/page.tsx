@@ -133,7 +133,7 @@ import type React from "react";
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { Upload, LinkIcon, X } from "lucide-react";
 
 interface Category {
@@ -157,7 +157,7 @@ export default function CategoriesAdmin() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
+  // const router = useRouter();
 
   useEffect(() => {
     fetchCategories();

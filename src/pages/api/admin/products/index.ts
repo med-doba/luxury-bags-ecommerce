@@ -477,7 +477,7 @@ export default async function handler(
       });
       res.status(200).json(products);
     } catch (error) {
-      res.status(500).json({ error: "Error fetching products" });
+      res.status(500).json({ error: `Error fetching products ${error}` });
     }
   } else if (req.method === "POST") {
     try {

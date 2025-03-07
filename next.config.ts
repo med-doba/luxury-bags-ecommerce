@@ -1,23 +1,34 @@
-import type { NextConfig } from "next";
+// import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  /* config options here */
+// const nextConfig: NextConfig = {
+//   /* config options here */
+//   images: {
+//     domains: [
+//       "www.yourprint.in",
+//       "fastly.picsum.photos",
+//       "images.unsplash.com",
+//       "plus.unsplash.com",
+//       "eu.louisvuitton.com",
+//       "img.freepik.com",
+//       "media.gucci.com",
+//       "drive.google.com",
+//       "hebbkx1anhila5yf.public.blob.vercel-storage.com",
+//     ], // ✅ Add allowed image domain
+//   },
+// };
+
+// export default nextConfig;
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: "standalone", // Required for full-stack Next.js apps
   images: {
-    domains: [
-      "www.yourprint.in",
-      "fastly.picsum.photos",
-      "images.unsplash.com",
-      "plus.unsplash.com",
-      "eu.louisvuitton.com",
-      "img.freepik.com",
-      "media.gucci.com",
-      "drive.google.com",
-      "hebbkx1anhila5yf.public.blob.vercel-storage.com",
-    ], // ✅ Add allowed image domain
+    domains: ["localhost"], // Only needed if serving from an external source
+    unoptimized: true, // Allows local images
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
 
 // import type { NextConfig } from "next";
 

@@ -106,7 +106,7 @@ export default async function handler(
         res.status(404).json({ error: "Product not found" });
       }
     } catch (error) {
-      res.status(500).json({ error: "Error fetching product" });
+      res.status(500).json({ error: `Error fetching product${error}` });
     }
   } else {
     res.setHeader("Allow", ["GET"]);

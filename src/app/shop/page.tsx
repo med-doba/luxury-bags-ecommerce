@@ -413,7 +413,8 @@ export default function ShopPage() {
               <div className="mt-4 space-y-1">
                 <h3 className="text-sm text-gray-700">{product.name}</h3>
                 <p className="text-lg font-medium text-gray-900">
-                  {parseFloat(product.price).toFixed(2)} MAD
+                  {/* {parseFloat(product.price).toFixed(2)} MAD */}
+                  {Number(product.price)?.toFixed(2) ?? "0.00"} MAD
                 </p>
               </div>
             </Link>

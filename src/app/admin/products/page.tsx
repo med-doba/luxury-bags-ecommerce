@@ -1443,7 +1443,7 @@ import type React from "react";
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { Upload, LinkIcon, X, Plus } from "lucide-react";
 
 interface Product {
@@ -1494,7 +1494,7 @@ export default function ProductsAdmin() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const additionalImagesRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
+  // const router = useRouter();
 
   useEffect(() => {
     fetchProducts();
@@ -1990,7 +1990,8 @@ export default function ProductsAdmin() {
             </div>
             <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
             <p className="text-gray-600 mb-2">
-              ${parseFloat(product.price).toFixed(2)}
+              {/* ${parseFloat(product.price).toFixed(2)} */}
+              {Number(product.price)?.toFixed(2) ?? "0.00"}
             </p>
             <p className="text-gray-600 mb-2">
               Category: {product.category.name}

@@ -65,7 +65,8 @@ export default function FeaturedCollections() {
               <div className="mt-4 space-y-1">
                 <h3 className="text-sm text-text">{product.name}</h3>
                 <p className="text-lg font-medium text-primary">
-                  {parseFloat(product.price).toFixed(2)} MAD
+                  {/* {parseFloat(product.price).toFixed(2)} MAD */}
+                  {Number(product.price)?.toFixed(2) ?? "0.00"} MAD
                 </p>
               </div>
             </Link>
