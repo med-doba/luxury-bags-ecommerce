@@ -103,8 +103,8 @@ export default function CheckoutFlow({
       ).toLocaleString()}\n`;
     });
 
-    invoiceContent += `\nSubtotal: $${totalAmount.toLocaleString()}\n`;
-    invoiceContent += "Tax & duty: Included\n";
+    invoiceContent += `\nSous-total: $${totalAmount.toLocaleString()}\n`;
+    invoiceContent += "Taxes et droits: Included\n";
     invoiceContent += "Shipping: Free\n";
     invoiceContent += `TOTAL: $${totalAmount.toLocaleString()}\n\n`;
 
@@ -426,11 +426,11 @@ export default function CheckoutFlow({
 
               <div className="border-t pt-4">
                 <div className="flex justify-between mb-2">
-                  <span>Subtotal</span>
+                  <span>Sous-total</span>
                   <span>{totalAmount.toLocaleString()}MAD</span>
                 </div>
                 <div className="flex justify-between mb-2">
-                  <span>Tax & duty</span>
+                  <span>Taxes et droits</span>
                   <span>Included</span>
                 </div>
                 <div className="flex justify-between mb-4">

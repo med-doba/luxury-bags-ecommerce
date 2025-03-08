@@ -54,7 +54,7 @@
 //     setItems(items.filter((item) => item.id !== id));
 //   };
 
-//   const subtotal = items.reduce(
+//   const Sous-total = items.reduce(
 //     (sum, item) => sum + item.price * item.quantity,
 //     0
 //   );
@@ -141,8 +141,8 @@
 
 //             <div className="space-y-1 text-sm">
 //               <p>Free shipping in 2-7 business days</p>
-//               <p>Free online returns for 14 days</p>
-//               <p>Free exchange in store for 30 days</p>
+//               <p>Retours en ligne gratuits pendant 14 jours</p>
+//               <p>Échange gratuit en magasin pendant 30 jours</p>
 //               <button
 //                 onClick={() => setShowReturns(!showReturns)}
 //                 className="flex items-center text-sm mt-2"
@@ -157,8 +157,8 @@
 
 //         <div className="p-4 border-t mt-auto">
 //           <div className="flex justify-between mb-4">
-//             <span>Subtotal</span>
-//             <span className="font-medium">{subtotal.toLocaleString()}د.إ</span>
+//             <span>Sous-total</span>
+//             <span className="font-medium">{Sous-total.toLocaleString()}د.إ</span>
 //           </div>
 //           <div className="space-y-2">
 //             {/* <button className="w-full bg-black text-white py-3 px-4">
@@ -168,7 +168,7 @@
 //               href="/checkout"
 //               className="block w-full bg-black text-white text-center py-3 px-4 rounded transition-colors hover:bg-gray-800"
 //             >
-//               Proceed to Checkout
+//               Passer à la caisse
 //             </Link>
 //             <Link
 //               href="/basket"
@@ -318,8 +318,8 @@
 
 //             <div className="space-y-1 text-sm">
 //               <p>Free shipping in 2-7 business days</p>
-//               <p>Free online returns for 14 days</p>
-//               <p>Free exchange in store for 30 days</p>
+//               <p>Retours en ligne gratuits pendant 14 jours</p>
+//               <p>Échange gratuit en magasin pendant 30 jours</p>
 //               <button
 //                 onClick={() => setShowReturns(!showReturns)}
 //                 className="flex items-center text-sm mt-2"
@@ -334,7 +334,7 @@
 
 //         <div className="p-4 border-t mt-auto">
 //           <div className="flex justify-between mb-4">
-//             <span>Subtotal</span>
+//             <span>Sous-total</span>
 //             <span className="font-medium">
 //               {totalPrice.toLocaleString()}د.إ
 //             </span>
@@ -344,7 +344,7 @@
 //               href="/checkout"
 //               className="block w-full bg-black text-white text-center py-3 px-4 rounded transition-colors hover:bg-gray-800"
 //             >
-//               Proceed to Checkout
+//               Passer à la caisse
 //             </Link>
 //             <Link
 //               href="/basket"
@@ -432,7 +432,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       >
         <div className="h-full flex flex-col">
           <div className="flex items-center justify-between p-4 border-b">
-            <h2 className="text-xl">Basket · {items.length}</h2>
+            <h2 className="text-xl">Panier · {items.length}</h2>
             <button onClick={onClose} className="p-2">
               <X className="h-6 w-6" />
             </button>
@@ -480,7 +480,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         onClick={() => removeItem(item.id)}
                         className="text-sm underline"
                       >
-                        Delete
+                        Supprimer
                       </button>
                       <button className="p-1">
                         <Bookmark className="h-4 w-4" />
@@ -500,20 +500,21 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   height={40}
                 />
                 <p>
-                  All purchases made will arrive in our signature monochrome
-                  packaging. You can also add a personalised card on your gifts.
+                  Tous les achats effectués seront livrés dans notre emballage
+                  monochrome signature. Vous pouvez également ajouter une carte
+                  personnalisée à vos cadeaux.
                 </p>
               </div>
 
               <div className="space-y-1 text-sm">
-                <p>Livraison gratuite in 2-7 business days</p>
-                <p>Free online returns for 14 days</p>
-                <p>Free exchange in store for 30 days</p>
+                <p>Livraison gratuite sous 2 à 7 jours ouvrables</p>
+                <p>Retours en ligne gratuits pendant 14 jours</p>
+                <p>Échange gratuit en magasin pendant 30 jours</p>
                 <button
                   onClick={() => setShowReturns(!showReturns)}
                   className="flex items-center text-sm mt-2"
                 >
-                  Learn more <ChevronDown className="h-4 w-4 ml-1" />
+                  En savoir plus <ChevronDown className="h-4 w-4 ml-1" />
                 </button>
               </div>
             </div>
@@ -523,9 +524,9 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
           <div className="p-4 border-t mt-auto">
             <div className="flex justify-between mb-4">
-              <span>Subtotal</span>
+              <span>Sous-total</span>
               <span className="font-medium">
-                {totalPrice.toLocaleString()}د.إ
+                {totalPrice.toLocaleString()}MAD
               </span>
             </div>
             <div className="space-y-2">
@@ -533,13 +534,13 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 href="/checkout"
                 className="block w-full bg-black text-white text-center py-3 px-4 rounded transition-colors hover:bg-gray-800"
               >
-                Proceed to Checkout
+                Passer à la caisse
               </Link>
               <Link
                 href="/basket"
                 className="block w-full text-center py-3 px-4 border border-black rounded hover:bg-gray-100 transition-colors"
               >
-                View your basket
+                Voir votre panier
               </Link>
             </div>
           </div>
@@ -552,7 +553,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 function ReturnPolicy() {
   return (
     <div className="p-4 bg-gray-50">
-      <h3 className="font-medium mb-4">Free returns</h3>
+      <h3 className="font-medium mb-4">Retours gratuits</h3>
       <div className="space-y-4 text-sm">
         <div>
           <p className="mb-2">

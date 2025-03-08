@@ -127,8 +127,8 @@ export default function CheckoutSuccessPage() {
 //       0
 //     );
 
-//     invoiceContent += `\nSubtotal: $${totalAmount.toLocaleString()}\n`;
-//     invoiceContent += "Tax & duty: Included\n";
+//     invoiceContent += `\nSous-total: $${totalAmount.toLocaleString()}\n`;
+//     invoiceContent += "Taxes et droits: Included\n";
 //     invoiceContent += "Shipping: Free\n";
 //     invoiceContent += `TOTAL: $${totalAmount.toLocaleString()}\n\n`;
 
