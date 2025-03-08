@@ -21,11 +21,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         </button>
         <nav className="mt-8">
           <ul className="space-y-4">
-            <li>
+            {/* <li>
               <Link href="/shop/brands" className="text-lg font-semibold">
                 Marques
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link href="/accessories" className="text-lg font-semibold">
                 Nouvelle Collection

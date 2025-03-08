@@ -506,7 +506,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               </div>
 
               <div className="space-y-1 text-sm">
-                <p>Free shipping in 2-7 business days</p>
+                <p>Livraison gratuite in 2-7 business days</p>
                 <p>Free online returns for 14 days</p>
                 <p>Free exchange in store for 30 days</p>
                 <button
