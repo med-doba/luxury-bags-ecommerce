@@ -21,10 +21,10 @@ interface CheckoutFlowProps {
 }
 
 const steps = [
-  { id: 1, name: "Basket" },
-  { id: 2, name: "Details" },
-  { id: 3, name: "Shipping" },
-  { id: 4, name: "Payment" },
+  { id: 1, name: "Panier" },
+  { id: 2, name: "Détails" },
+  { id: 3, name: "Livraison" },
+  { id: 4, name: "Paiement" },
 ];
 
 export default function CheckoutFlow({
@@ -82,36 +82,36 @@ export default function CheckoutFlow({
   const generateInvoicePDF = () => {
     // In a real application, this would generate a PDF invoice
     // For this example, we'll create a simple text representation
-    let invoiceContent = "INVOICE\n\n";
+    let invoiceContent = "FACTURE\n\n";
     invoiceContent += `Date: ${new Date().toLocaleDateString()}\n`;
-    invoiceContent += `Order #: ORD-${Math.floor(Math.random() * 10000)
+    invoiceContent += `Commande n°: ORD-${Math.floor(Math.random() * 10000)
       .toString()
       .padStart(4, "0")}\n\n`;
 
-    invoiceContent += "CUSTOMER INFORMATION\n";
+    invoiceContent += "INFORMATIONS CLIENT\n";
     invoiceContent += `${shippingInfo.firstName} ${shippingInfo.lastName}\n`;
     invoiceContent += `${shippingInfo.address}\n`;
     // invoiceContent += `${shippingInfo.city}, ${shippingInfo.postalCode}\n`;
     // invoiceContent += `${shippingInfo.country}\n`;
-    invoiceContent += `${shippingInfo.phone}\n`;
-    invoiceContent += `${email}\n\n`;
+    invoiceContent += `${shippingInfo.phone}\n\n`;
+    // invoiceContent += `${email}\n\n`;
 
-    invoiceContent += "ITEMS\n";
+    invoiceContent += "ARTICLES\n";
     initialProducts.forEach((product) => {
-      invoiceContent += `${product.name} x ${product.quantity} - $${(
+      invoiceContent += `${product.name} x ${product.quantity} - MAD${(
         product.price * product.quantity
       ).toLocaleString()}\n`;
     });
 
-    invoiceContent += `\nSous-total: $${totalAmount.toLocaleString()}\n`;
-    invoiceContent += "Taxes et droits: Included\n";
-    invoiceContent += "Shipping: Free\n";
-    invoiceContent += `TOTAL: $${totalAmount.toLocaleString()}\n\n`;
+    invoiceContent += `\nSous-total: MAD${totalAmount.toLocaleString()}\n`;
+    invoiceContent += "Taxes et droits: Inclus\n";
+    invoiceContent += "Livraison: Gratuite\n";
+    invoiceContent += `TOTAL: MAD${totalAmount.toLocaleString()}\n\n`;
 
-    invoiceContent += "PAYMENT METHOD\n";
-    invoiceContent += "Cash on Delivery\n\n";
+    invoiceContent += "MODE DE PAIEMENT\n";
+    invoiceContent += "Paiement à la livraison\n\n";
 
-    invoiceContent += "Thank you for your order!";
+    invoiceContent += "Merci pour votre commande ! 🚀";
 
     // Create a Blob with the invoice content
     const blob = new Blob([invoiceContent], { type: "text/plain" });
@@ -134,11 +134,11 @@ export default function CheckoutFlow({
           <div className="flex items-center justify-between mb-8">
             <Link href="/basket" className="flex items-center text-sm">
               <ChevronLeft className="h-4 w-4 mr-1" />
-              Back to Basket
+              Retour au panier
             </Link>
             <Image
               src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-02-16%20at%2013.59.53-znxDQTZ0oCtklmta5tSOpxxbJnj1cS.png"
-              alt="LOEWE"
+              alt="MOIÉTOI"
               width={120}
               height={40}
               className="mx-auto"
@@ -331,25 +331,28 @@ export default function CheckoutFlow({
                   onClick={() => isShippingFormValid() && setCurrentStep(4)}
                   disabled={!isShippingFormValid()}
                 >
-                  Continue to Payment
+                  Continuer vers le paiement
                 </button>
               </>
             )}
 
             {currentStep === 4 && (
               <>
-                <h2 className="text-xl font-medium mb-6">Payment Method</h2>
+                <h2 className="text-xl font-medium mb-6">Mode de paiement</h2>
                 <div className="bg-gray-50 p-6 rounded-lg mb-6">
                   <div className="flex items-center mb-4">
                     <CheckCircle className="h-6 w-6 text-green-500 mr-2" />
-                    <h3 className="text-lg font-medium">Cash on Delivery</h3>
+                    <h3 className="text-lg font-medium">
+                      Paiement à la livraison
+                    </h3>
                   </div>
                   <p className="text-gray-600 mb-4">
-                    Pay with cash when your order is delivered to your doorstep.
+                    Payez en espèces à la livraison de votre commande à votre
+                    domicile.
                   </p>
                   <div className="border-t pt-4 mt-4">
                     <div className="flex justify-between text-lg font-medium">
-                      <span>Total to Pay:</span>
+                      <span>Total à payer:</span>
                       <span>{totalAmount.toLocaleString()} MAD</span>
                     </div>
                   </div>
@@ -360,7 +363,7 @@ export default function CheckoutFlow({
                   className="w-full flex justify-center items-center py-3 mb-4 border border-black text-black hover:bg-gray-100"
                 >
                   <Download className="h-5 w-5 mr-2" />
-                  Download Invoice
+                  Télécharger la facture
                 </button>
 
                 <div className="mb-6">
@@ -372,9 +375,10 @@ export default function CheckoutFlow({
                       className="mt-1 mr-2"
                     />
                     <span className="text-sm text-gray-600">
-                      I agree to the terms and conditions, privacy policy, and
-                      return policy. I understand that my personal data will be
-                      processed as described in the privacy policy.
+                      J'accepte les termes et conditions, la politique de
+                      confidentialité et la politique de retour. Je comprends
+                      que mes données personnelles seront traitées comme décrit
+                      dans la politique de confidentialité.
                     </span>
                   </label>
                 </div>
@@ -388,7 +392,7 @@ export default function CheckoutFlow({
                   onClick={handleCompleteOrder}
                   disabled={!agreeToTerms}
                 >
-                  Complete Order
+                  Finaliser la commande
                 </button>
               </>
             )}
@@ -397,7 +401,7 @@ export default function CheckoutFlow({
           <div className="lg:pl-8">
             <div className="bg-gray-50 p-6 rounded">
               <h3 className="text-lg font-medium mb-4">
-                Your order ({initialProducts.length})
+                Votre commande ({initialProducts.length})
               </h3>
               <div className="space-y-4 mb-6">
                 {initialProducts.map((product) => (
@@ -412,7 +416,7 @@ export default function CheckoutFlow({
                     <div className="flex-1">
                       <h4 className="font-medium">{product.name}</h4>
                       <p className="text-sm text-gray-600">
-                        Quantity: {product.quantity}
+                        Quantité: {product.quantity}
                       </p>
                     </div>
                     <div className="text-right">
@@ -434,8 +438,8 @@ export default function CheckoutFlow({
                   <span>Included</span>
                 </div>
                 <div className="flex justify-between mb-4">
-                  <span>Shipping</span>
-                  <span>Free</span>
+                  <span>Livraison</span>
+                  <span>Gratuite</span>
                 </div>
                 <div className="flex justify-between font-medium">
                   <span>Total</span>
@@ -451,11 +455,11 @@ export default function CheckoutFlow({
                     width={24}
                     height={24}
                   />
-                  <span className="text-sm">Free shipping and returns</span>
+                  <span className="text-sm">Livraison et retours gratuits</span>
                 </div>
                 <p className="text-sm">
-                  Shipping 2-7 business days | Free online returns 14 days |
-                  Free exchange in store 30 days
+                  Livraison : 2 à 7 jours ouvrés | Retours en ligne gratuits
+                  sous 14 jours | Échange gratuit en magasin sous 30 jours
                 </p>
               </div>
             </div>

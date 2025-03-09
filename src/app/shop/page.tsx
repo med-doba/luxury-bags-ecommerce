@@ -363,7 +363,7 @@ export default function ShopPage() {
               return selectedOptions.includes(product.size.toUpperCase());
             case "categories":
               return selectedOptions.includes(
-                product.category.name.toUpperCase()
+                product.category?.name?.toUpperCase() || ""
               );
             case "price":
               const [min, max] = selectedOptions.map(Number);
@@ -385,13 +385,13 @@ export default function ShopPage() {
           <h1 className="text-4xl font-bold text-primary">
             Acheter tous les sacs
           </h1>
-          <button
+          {/* <button
             onClick={() => setIsFilterOpen(true)}
             className="flex items-center space-x-2 text-text hover:text-primary transition-colors"
           >
             <Filter className="h-5 w-5" />
             <span className="text-sm font-medium">Filters</span>
-          </button>
+          </button> */}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

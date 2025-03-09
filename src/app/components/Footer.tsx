@@ -142,7 +142,7 @@ export default function Footer() {
       </div>
       <div className="border-t border-gray-200 py-6">
         <p className="text-center text-gray-500 text-sm">
-          &copy; 2025 MoiéToi. All rights reserved.
+          &copy; 2025 MoiéToi. Tous droits réservés.
         </p>
       </div>
     </footer>

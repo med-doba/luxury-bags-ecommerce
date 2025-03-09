@@ -24,13 +24,15 @@ export default function CheckoutSuccessPage() {
         <div className="flex justify-center mb-6">
           <CheckCircle className="h-16 w-16 text-green-500" />
         </div>
-        <h1 className="text-3xl font-medium mb-4">Thank You for Your Order!</h1>
+        <h1 className="text-3xl font-medium mb-4">
+          Merci pour votre commande !
+        </h1>
         <p className="text-gray-600 mb-8">
-          Your order has been received and is now being processed. You will
-          receive a confirmation email shortly.
+          Votre commande a été reçue et est en cours de traitement. Vous
+          recevrez un e-mail de confirmation sous peu.
         </p>
         <div className="inline-block border border-gray-300 rounded-lg px-6 py-4 mb-8">
-          <p className="text-sm text-gray-600">Order Number</p>
+          <p className="text-sm text-gray-600">Numéro de commande</p>
           <p className="text-lg font-medium">
             #ORD-
             {Math.floor(Math.random() * 10000)
@@ -41,7 +43,7 @@ export default function CheckoutSuccessPage() {
       </div>
 
       <div className="bg-gray-50 p-6 rounded-lg mb-8">
-        <h2 className="text-xl font-medium mb-4">Order Summary</h2>
+        <h2 className="text-xl font-medium mb-4">Résumé de la commande</h2>
         <div className="space-y-4 mb-6">
           {items.map((item) => (
             <div key={item.id} className="flex gap-4">
@@ -55,7 +57,7 @@ export default function CheckoutSuccessPage() {
               <div className="flex-1">
                 <h4 className="font-medium">{item.name}</h4>
                 <p className="text-sm text-gray-600">
-                  Quantity: {item.quantity}
+                  Quantité: {item.quantity}
                 </p>
               </div>
               <div className="text-right">
@@ -73,7 +75,7 @@ export default function CheckoutSuccessPage() {
           href="/shop"
           className="inline-block bg-black text-white py-3 px-8 rounded transition-colors hover:bg-gray-800"
         >
-          Continue Shopping
+          Continuer vos achats
         </Link>
       </div>
     </div>

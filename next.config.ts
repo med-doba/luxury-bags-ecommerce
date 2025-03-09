@@ -21,7 +21,7 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "standalone", // Required for full-stack Next.js apps
+  // output: "standalone", // Required for full-stack Next.js apps
   images: {
     domains: ["localhost"], // Only needed if serving from an external source
     unoptimized: true, // Allows local images

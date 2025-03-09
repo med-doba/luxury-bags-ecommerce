@@ -353,7 +353,7 @@ export default function Header() {
           </div> */}
           <Link
             href="/contact"
-            className="text-primary hover:text-secondary transition-colors duration-300 text-sm"
+            className="hidden sm:block text-primary hover:text-secondary transition-colors duration-300 text-sm"
           >
             Contactez-nous
           </Link>

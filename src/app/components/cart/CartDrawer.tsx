@@ -557,31 +557,33 @@ function ReturnPolicy() {
       <div className="space-y-4 text-sm">
         <div>
           <p className="mb-2">
-            Free returns are available within 14 days of your online order
-            delivery date.
+            Les retours gratuits sont disponibles dans les 14 jours suivant la
+            date de livraison de votre commande en ligne.
           </p>
           <p>
-            Please note that the items must be in re-saleable condition and that
-            personalised items are non-exchangeable, non-refundable.
-          </p>
-        </div>
-        <div>
-          <h4 className="font-medium mb-2">Free exchange in store</h4>
-          <p>
-            You can visit one of our retail stores within 30 days after the date
-            of purchase using the delivery note included in the package.
-          </p>
-          <p>
-            Exchanges cannot be made at franchise stores, outlets or department
-            stores.
+            Veuillez noter que les articles doivent être en état de revente et
+            que les articles personnalisés ne sont ni échangeables ni
+            remboursables.
           </p>
         </div>
         <div>
-          <h4 className="font-medium mb-2">Store pick up</h4>
-          <p>Select a LOEWE store to collect your order.</p>
+          <h4 className="font-medium mb-2">Échange gratuit en magasin</h4>
           <p>
-            You can see the complete list of stores where this service is
-            available here.
+            Vous pouvez visiter l'un de nos magasins dans les 30 jours suivant
+            la date d'achat en présentant le bon de livraison inclus dans le
+            colis.
+          </p>
+          <p>
+            Les échanges ne peuvent pas être effectués dans les magasins
+            franchisés, les outlets ou les grands magasins.
+          </p>
+        </div>
+        <div>
+          <h4 className="font-medium mb-2">Retrait en magasin</h4>
+          <p>Sélectionnez un magasin MOIÉTOI pour récupérer votre commande.</p>
+          <p>
+            Vous pouvez consulter la liste complète des magasins proposant ce
+            service ici.
           </p>
         </div>
       </div>

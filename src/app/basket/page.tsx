@@ -116,8 +116,8 @@ export default function BasketPage() {
                   height={40}
                 />
                 <div className="text-sm">
-                  <h3 className="font-medium mb-1">Personalised message</h3>
-                  <p>Add a personalised card on your gifts.</p>
+                  <h3 className="font-medium mb-1">Message personnalisé</h3>
+                  <p>Ajoutez une carte personnalisée à vos cadeaux.</p>
                 </div>
               </div>
 
@@ -128,7 +128,7 @@ export default function BasketPage() {
                   Appelez-nous de 9h à 18h (heure de Rabat), du lundi au samedi.{" "}
                 </p>
                 <a
-                  href="mailto:clientservices_eu@loewe.com"
+                  href="mailto:clientservices_eu@moietoi.com"
                   className="text-sm underline"
                 >
                   clientservices_ma@moiettoi.com

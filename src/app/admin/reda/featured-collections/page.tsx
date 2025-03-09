@@ -68,7 +68,9 @@ export default function FeaturedCollectionsAdmin() {
                 {Number(product.price)?.toFixed(2) ?? "0.00"}
               </p>
               <p className="text-gray-600 mb-2">
-                Category: {product.category.name}
+                {/* Category: {product.category.name} */}
+                Category:{" "}
+                {product.category ? product.category.name : "No Category"}
               </p>
               <button
                 onClick={() =>
