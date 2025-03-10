@@ -22,9 +22,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // output: "standalone", // Required for full-stack Next.js apps
+  reactStrictMode: true,
+
   images: {
     domains: ["localhost"], // Only needed if serving from an external source
     unoptimized: true, // Allows local images
+  },
+  // Add configuration for serving static files from the uploads directory
+  async rewrites() {
+    return [
+      {
+        source: "/uploads/:path*",
+        destination: "/api/uploads/:path*",
+      },
+    ];
   },
 };
 
