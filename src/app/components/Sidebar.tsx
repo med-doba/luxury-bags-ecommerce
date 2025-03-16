@@ -22,22 +22,47 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <nav className="mt-8">
           <ul className="space-y-4">
             <li>
-              <Link href="/" className="text-lg font-semibold">
+              <Link
+                onClick={onClose}
+                href="/"
+                className="text-lg font-semibold"
+              >
                 Accueil
               </Link>
             </li>
             <li>
-              <Link href="/accessories" className="text-lg font-semibold">
+              <Link
+                onClick={onClose}
+                href="#FeaturedCollections"
+                className="text-lg font-semibold"
+              >
                 Nouvelle Collection
               </Link>
             </li>
             <li>
-              <Link href="/claim" className="text-lg font-semibold">
+              <Link
+                onClick={onClose}
+                href="#category"
+                className="text-lg font-semibold"
+              >
+                Acheter par catégorie
+              </Link>
+            </li>
+            <li>
+              <Link
+                onClick={onClose}
+                href="/claim"
+                className="text-lg font-semibold"
+              >
                 Réclamation
               </Link>
             </li>
             <li>
-              <Link href="/contact" className="text-lg font-semibold">
+              <Link
+                onClick={onClose}
+                href="/contact"
+                className="text-lg font-semibold"
+              >
                 Contactez-nous
               </Link>
             </li>

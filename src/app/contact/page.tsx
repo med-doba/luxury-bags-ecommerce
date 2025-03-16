@@ -229,11 +229,11 @@ export default function ContactPage() {
                       Adresse
                     </h3>
                     <p className="mt-1 text-gray-600">
-                      123 Avenue d'atlas
-                      <br />
+                      Rabat
+                      {/* <br />
                       75008 Rabat
                       <br />
-                      Maroc
+                      Maroc */}
                     </p>
                   </div>
                 </div>
@@ -244,7 +244,7 @@ export default function ContactPage() {
                     <h3 className="text-lg font-medium text-gray-900">
                       Téléphone
                     </h3>
-                    <p className="mt-1 text-gray-600">+212 6000000</p>
+                    <p className="mt-1 text-gray-600">+212663777275</p>
                   </div>
                 </div>
 
@@ -252,7 +252,7 @@ export default function ContactPage() {
                   <Mail className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
                   <div className="ml-4">
                     <h3 className="text-lg font-medium text-gray-900">Email</h3>
-                    <p className="mt-1 text-gray-600">contact@moietoi.com</p>
+                    <p className="mt-1 text-gray-600">relhammouni@gmail.com</p>
                   </div>
                 </div>
 
@@ -273,19 +273,11 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <div className="mt-8">
+              {/* <div className="mt-8">
                 <h3 className="text-lg font-medium text-gray-900 mb-4">
                   Trouvez-nous sur la carte
                 </h3>
                 <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
-                  {/* <iframe
-                    // src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2624.142047342144!2d2.3002659156744847!3d48.87456857928921!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e66fc4f8f3049b%3A0xcbb47407434935db!2sAv.%20des%20Champs-%C3%89lys%C3%A9es%2C%20Paris%2C%20France!5e0!3m2!1sen!2sus!4v1645564762226!5m2!1sen!2sus"
-                    width="600"
-                    height="450"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                ></iframe> */}
                   <iframe
                     src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d9537.64147686145!2d-6.733432807110393!3d33.98675053558945!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1sen!2sma!4v1741452063615!5m2!1sen!2sma"
                     width="600"
@@ -296,7 +288,7 @@ export default function ContactPage() {
                     className="w-full h-full"
                   ></iframe>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

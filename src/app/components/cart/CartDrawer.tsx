@@ -473,7 +473,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <span className="font-medium">
-                      {item.price.toLocaleString()}MAD
+                      {item.price.toLocaleString()} MAD
                     </span>
                     <div className="flex gap-2">
                       <button
@@ -526,17 +526,19 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             <div className="flex justify-between mb-4">
               <span>Sous-total</span>
               <span className="font-medium">
-                {totalPrice.toLocaleString()}MAD
+                {totalPrice.toLocaleString()} MAD
               </span>
             </div>
             <div className="space-y-2">
               <Link
+                onClick={onClose}
                 href="/checkout"
                 className="block w-full bg-black text-white text-center py-3 px-4 rounded transition-colors hover:bg-gray-800"
               >
                 Passer à la caisse
               </Link>
               <Link
+                onClick={onClose}
                 href="/basket"
                 className="block w-full text-center py-3 px-4 border border-black rounded hover:bg-gray-100 transition-colors"
               >

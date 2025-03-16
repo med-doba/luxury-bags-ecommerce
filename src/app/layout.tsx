@@ -70,6 +70,7 @@ import { CartProvider } from "./contexts/CartContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import "./globals.css";
+import WhatsAppButton from "./components/WhatsAppButton";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -89,6 +90,10 @@ export default function RootLayout({
         <CartProvider>
           <Header />
           <main>{children}</main>
+          <WhatsAppButton
+            phoneNumber="+212663777275" // Replace with your actual WhatsApp number
+            message="Bonjour, j'ai une question concernant vos sacs de luxe."
+          />
           <Footer />
         </CartProvider>
       </body>

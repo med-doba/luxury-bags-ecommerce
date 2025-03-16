@@ -20,7 +20,7 @@ export default function CategorySection({
   console.log("CategorySection received categories:", categories);
 
   return (
-    <section className="bg-background py-16 sm:py-24">
+    <section className="bg-background py-16 sm:py-24" id="category">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-extrabold text-primary mb-6">
           Acheter par catégorie

@@ -32,7 +32,7 @@ export default function FeaturedCollections() {
   };
 
   return (
-    <section className="bg-background">
+    <section className="bg-background" id="FeaturedCollections">
       <div className="max-w-2xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
         <div className="flex justify-between items-end mb-6">
           <h2 className="text-3xl font-extrabold text-primary">

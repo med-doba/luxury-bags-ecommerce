@@ -9,7 +9,7 @@ export default function BasketPage() {
   const { items, removeItem, updateQuantity, totalPrice } = useCart();
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-20">
       <h1 className="text-2xl font-medium mb-8">Basket · {items.length}</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -44,7 +44,7 @@ export default function BasketPage() {
                 </div>
                 <div className="flex flex-col items-end gap-2">
                   <span className="font-medium">
-                    {item.price.toLocaleString()}MAD
+                    {item.price.toLocaleString()} MAD
                   </span>
                   <div className="flex gap-2">
                     <button
@@ -68,7 +68,7 @@ export default function BasketPage() {
             <div className="space-y-4 mb-6">
               <div className="flex justify-between">
                 <span>Sous-total</span>
-                <span>{totalPrice.toLocaleString()}MAD</span>
+                <span>{totalPrice.toLocaleString()} MAD</span>
               </div>
               <div className="flex justify-between">
                 <span>Taxes et droits</span>
@@ -80,7 +80,7 @@ export default function BasketPage() {
               </div>
               <div className="flex justify-between font-medium text-lg pt-4 border-t">
                 <span>Total</span>
-                <span>{totalPrice.toLocaleString()}MAD</span>
+                <span>{totalPrice.toLocaleString()} MAD</span>
               </div>
             </div>
 
