@@ -54,7 +54,6 @@ export default function FeaturedCollectionsAdmin() {
                 alt={product.name}
                 className="w-full h-40 object-cover mb-4 rounded"
               /> */}
-              import Image from "next/image"; // Import Next.js Image at the top
               <Image
                 src={product.imageUrl || "/placeholder.svg"}
                 alt={product.name}

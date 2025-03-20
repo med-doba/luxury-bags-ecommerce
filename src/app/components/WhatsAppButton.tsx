@@ -12,7 +12,7 @@ interface WhatsAppButtonProps {
 
 export default function WhatsAppButton({
   phoneNumber,
-  message = "Bonjour, j'ai une question concernant vos produits.",
+  message = "Besoin d’un sac stylé et pratique ? 👜✨ Découvrez nos modèles tendance et de qualité sur moietoi.ma! Livraison rapide & offres spéciales. 🔥",
   position = "bottom-right",
 }: WhatsAppButtonProps) {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);

@@ -18,7 +18,7 @@ interface WhatsAppChatProps {
 
 export default function WhatsAppChat({
   phoneNumber,
-  businessName = "Luxury Bags",
+  businessName = "MOIÉTOI",
   avatar = "/logo.png", // Replace with your logo
   welcomeMessage = "Bonjour! Comment puis-je vous aider aujourd'hui?",
   position = "bottom-right",

@@ -4,7 +4,7 @@ import Newsletter from "./Newsletter";
 export default function Footer() {
   return (
     <footer className="bg-gray-100">
-      <div className="container mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="container mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div>
           <h3 className="text-lg font-semibold mb-4">Catégories</h3>
           <ul className="space-y-2">
@@ -63,7 +63,7 @@ export default function Footer() {
             </li>
           </ul>
         </div>
-        <div>
+        {/* <div>
           <h3 className="text-lg font-semibold mb-4">À propos de nous</h3>
           <ul className="space-y-2">
             <li>
@@ -91,7 +91,7 @@ export default function Footer() {
               </Link>
             </li>
           </ul>
-        </div>
+        </div> */}
         <div>
           <h3 className="text-lg font-semibold mb-4">Restez connecté</h3>
           <Newsletter />

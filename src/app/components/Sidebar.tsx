@@ -33,7 +33,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             <li>
               <Link
                 onClick={onClose}
-                href="#FeaturedCollections"
+                href="/#FeaturedCollections"
                 className="text-lg font-semibold"
               >
                 Nouvelle Collection
@@ -42,7 +42,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             <li>
               <Link
                 onClick={onClose}
-                href="#category"
+                href="/#category"
                 className="text-lg font-semibold"
               >
                 Acheter par catégorie

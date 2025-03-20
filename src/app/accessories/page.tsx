@@ -19,7 +19,7 @@ async function getNewCollections() {
       {
         id: "1",
         name: "Collection Printemps-Été 2025",
-        imageUrl: "/images/collections/spring-summer.jpg",
+        imageUrl: "/images/1.jpg",
         description:
           "Notre nouvelle collection inspirée par les couleurs vives et les textures légères de la saison estivale.",
         releaseDate: "Mars 2025",
@@ -27,7 +27,7 @@ async function getNewCollections() {
       {
         id: "2",
         name: "Collection Capsule Voyage",
-        imageUrl: "/images/collections/travel.jpg",
+        imageUrl: "/images/2.jpg",
         description:
           "Des pièces élégantes et fonctionnelles conçues pour les voyageurs exigeants.",
         releaseDate: "Avril 2025",
@@ -35,7 +35,7 @@ async function getNewCollections() {
       {
         id: "3",
         name: "Collection Édition Limitée",
-        imageUrl: "/images/collections/limited.jpg",
+        imageUrl: "/images/3.jpg",
         description:
           "Une série exclusive de sacs à main en édition limitée, créée en collaboration avec des artistes contemporains.",
         releaseDate: "Mai 2025",

@@ -70,10 +70,10 @@ export default function BasketPage() {
                 <span>Sous-total</span>
                 <span>{totalPrice.toLocaleString()} MAD</span>
               </div>
-              <div className="flex justify-between">
+              {/* <div className="flex justify-between">
                 <span>Taxes et droits</span>
                 <span>Inclus</span>
-              </div>
+              </div> */}
               <div className="flex justify-between">
                 <span>Livraison</span>
                 <span>Gratuit</span>
@@ -92,7 +92,7 @@ export default function BasketPage() {
             </Link>
 
             <div className="space-y-6">
-              <div className="flex items-center gap-4 p-4 bg-white rounded">
+              {/* <div className="flex items-center gap-4 p-4 bg-white rounded">
                 <Image
                   src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-02-16%20at%2013.59.14-3OOfluGiDPbF1IEfxBNU5Og5vNxc8U.png"
                   alt="Package"
@@ -106,9 +106,9 @@ export default function BasketPage() {
                     signature.
                   </p>
                 </div>
-              </div>
+              </div> */}
 
-              <div className="flex items-center gap-4 p-4 bg-white rounded">
+              {/* <div className="flex items-center gap-4 p-4 bg-white rounded">
                 <Image
                   src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-02-16%20at%2013.59.14-3OOfluGiDPbF1IEfxBNU5Og5vNxc8U.png"
                   alt="Message"
@@ -119,11 +119,11 @@ export default function BasketPage() {
                   <h3 className="font-medium mb-1">Message personnalisé</h3>
                   <p>Ajoutez une carte personnalisée à vos cadeaux.</p>
                 </div>
-              </div>
+              </div> */}
 
               <div>
                 <h3 className="font-medium mb-2">Besoin d'aide ?</h3>
-                <p className="text-sm mb-1">+21260000000</p>
+                <p className="text-sm mb-1">+212 663777275</p>
                 <p className="text-sm mb-1">
                   Appelez-nous de 9h à 18h (heure de Rabat), du lundi au samedi.{" "}
                 </p>
@@ -131,7 +131,7 @@ export default function BasketPage() {
                   href="mailto:clientservices_eu@moietoi.com"
                   className="text-sm underline"
                 >
-                  clientservices_ma@moiettoi.com
+                  relhammouni@gmail.com
                 </a>
               </div>
             </div>

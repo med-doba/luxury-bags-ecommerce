@@ -92,7 +92,7 @@ export default function RootLayout({
           <main>{children}</main>
           <WhatsAppButton
             phoneNumber="+212663777275" // Replace with your actual WhatsApp number
-            message="Bonjour, j'ai une question concernant vos sacs de luxe."
+            message="Besoin d’un sac stylé et pratique ? 👜✨ Découvrez nos modèles tendance et de qualité sur moietoi.ma! Livraison rapide & offres spéciales. 🔥"
           />
           <Footer />
         </CartProvider>
