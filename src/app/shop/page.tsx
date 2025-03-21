@@ -458,13 +458,13 @@ export default function ShopPage() {
               ? `${selectedCategory.name}`
               : "Acheter tous les sacs"}
           </h1>
-          <button
+          {/* <button
             onClick={() => setIsFilterOpen(true)}
             className="flex items-center space-x-2 text-text hover:text-primary transition-colors"
           >
             <Filter className="h-5 w-5" />
             <span className="text-sm font-medium">Filters</span>
-          </button>
+          </button> */}
         </div>
 
         {isLoading ? (
