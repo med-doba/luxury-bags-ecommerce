@@ -573,7 +573,7 @@
 //               </div>
 //               <span>|</span>
 //               <div class="contact-item">
-//                 <span>relhammouni@gmail.com</span>
+//                 <span>sacmoietoi@gmail.com</span>
 //               </div>
 //             </div>
 
@@ -1050,7 +1050,7 @@
 //               </div>
 //               <span>|</span>
 //               <div class="contact-item">
-//                 <span>relhammouni@gmail.com</span>
+//                 <span>sacmoietoi@gmail.com</span>
 //               </div>
 //             </div>
 
@@ -1567,17 +1567,11 @@ export default async function handler(
               </div>
               <span>|</span>
               <div class="contact-item">
-                <span>relhammouni@gmail.com</span>
+                <span>sacmoietoi@gmail.com</span>
               </div>
             </div>
             
-            <!-- Main Title -->
-            <div class="title">
-              <h2>MON PANIER</h2>
-              <p>Commande #${cartId}</p>
-            </div>
-            
-            <hr class="divider">
+           <!-- <hr class="divider"> -->
             
             <!-- Items -->
             ${items
@@ -1591,12 +1585,8 @@ export default async function handler(
                 }" alt="${item.name}" class="item-image">
                 <div class="item-details">
                   <h3>${item.name}</h3>
-                  <p>Réf: ${item.id.substring(0, 6).toUpperCase()}</p>
-                  <p>Style: Premium Leather</p>
                   <p>Couleur: ${item.color || "Default"}</p>
                   <p>Taille: ${item.size || "Universal"}</p>
-                  <p style="font-weight: 600; margin-top: 10px;">DISPONIBLE</p>
-                  <p>Livraison gratuite</p>
                 </div>
                 <div class="item-price">
                   <p style="font-size: 18px; margin-bottom: 5px;">${item.price.toLocaleString()} MAD</p>
@@ -1607,23 +1597,7 @@ export default async function handler(
               )
               .join("")}
             
-            <hr class="divider">
-            
-            <!-- Order Summary -->
-            <div class="summary">
-              <div class="summary-row">
-                <p>Sous-total (${totalItems} articles)</p>
-                <p>${totalAmount.toLocaleString()} MAD</p>
-              </div>
-              <div class="summary-row">
-                <p>Livraison</p>
-                <p>Gratuite</p>
-              </div>
-              <div class="summary-row total">
-                <p>Total</p>
-                <p>${totalAmount.toLocaleString()} MAD</p>
-              </div>
-            </div>
+            <!-- <hr class="divider"> -->
             
             <!-- Customer Information -->
             <div class="customer-info">
@@ -1640,25 +1614,12 @@ export default async function handler(
               }
             </div>
             
-            <!-- Delivery Note -->
+            <!-- Delivery Note 
             <div class="delivery-note">
-              <h3>Informations de livraison</h3>
-              <p>
-                Cher(e) client(e),<br>
-                Nous vous informons que nos livraisons sont effectuées selon le planning suivant:
-              </p>
-              <ul class="delivery-list">
-                <li><strong>Rabat et environs:</strong> chaque Mercredi et Samedi</li>
-                <li><strong>Casablanca:</strong> uniquement le Samedi</li>
-              </ul>
-              <p>
-                Merci de bien vouloir passer vos commandes en conséquence
-                afin de garantir leur livraison dans les meilleurs délais.
-              </p>
+            </div> -->
               <p class="thank-you">
                 Nous vous remercions pour votre confiance.
               </p>
-            </div>
           </div>
         </body>
       </html>

@@ -131,7 +131,7 @@ export default function BasketPage() {
                   href="mailto:clientservices_eu@moietoi.com"
                   className="text-sm underline"
                 >
-                  relhammouni@gmail.com
+                  sacmoietoi@gmail.com
                 </a>
               </div>
             </div>

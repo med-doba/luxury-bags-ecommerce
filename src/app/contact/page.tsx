@@ -252,7 +252,7 @@ export default function ContactPage() {
                   <Mail className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
                   <div className="ml-4">
                     <h3 className="text-lg font-medium text-gray-900">Email</h3>
-                    <p className="mt-1 text-gray-600">relhammouni@gmail.com</p>
+                    <p className="mt-1 text-gray-600">sacmoietoi@gmail.com</p>
                   </div>
                 </div>
 

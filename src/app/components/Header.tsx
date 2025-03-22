@@ -56,7 +56,7 @@
 //           href="/"
 //           className="text-2xl font-bold text-center absolute left-1/2 transform -translate-x-1/2 text-primary hover:text-secondary transition-colors duration-300"
 //         >
-//           MoiéToi
+//           MOIÉTOI
 //         </Link>
 
 //         <div className="flex items-center space-x-4">
@@ -184,7 +184,7 @@
 //           href="/"
 //           className="text-2xl font-bold text-center absolute left-1/2 transform -translate-x-1/2 text-primary hover:text-secondary transition-colors duration-300"
 //         >
-//           MoiéToi
+//           MOIÉTOI
 //         </Link>
 
 //         <div className="flex items-center space-x-4">
@@ -313,7 +313,7 @@ export default function Header() {
           href="/"
           className="text-2xl font-bold text-center absolute left-1/2 transform -translate-x-1/2 text-primary hover:text-secondary transition-colors duration-300"
         >
-          MoiéToi
+          MOIÉTOI
         </Link>
 
         <div className="flex items-center space-x-4">

@@ -215,11 +215,12 @@ function CategoryCard({ category }: { category: Category }) {
       <div className="relative w-full aspect-square overflow-hidden rounded-lg bg-accent">
         {!imageError ? (
           <div className="relative w-full aspect-square overflow-hidden rounded-lg bg-gray-200">
+            {/* <div className="relative w-full aspect-square overflow-hidden rounded-lg bg-gray-200"> */}
             <Image
               src={category.imageUrl || "/placeholder.svg"}
               alt={category.name}
               fill
-              className="object-cover object-center group-hover:opacity-75 transition-opacity duration-300"
+              className="object-contain object-center group-hover:opacity-75 transition-opacity duration-300"
               sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
               onError={() => setImageError(true)}
             />
