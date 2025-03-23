@@ -130,6 +130,9 @@ export default async function handler(
         const description = (fields.description?.[0] as string) || "";
         const featured = (fields.featured?.[0] as string) === "true";
 
+        // Add this line to extract the stock field
+        const stock = Number.parseInt((fields.stock?.[0] as string) || "5");
+
         // Handle image URL or file
         let imageUrl = (fields.imageUrl?.[0] as string) || "";
 
@@ -166,6 +169,7 @@ export default async function handler(
           size,
           description,
           featured,
+          stock, // Add this line to include the stock field
         };
 
         // Only update imageUrl if it's provided

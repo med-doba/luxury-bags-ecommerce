@@ -5,6 +5,7 @@ import type React from "react";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Upload, LinkIcon, X } from "lucide-react";
+import Link from "next/link";
 
 type Category = {
   id: string;
@@ -207,8 +208,11 @@ const AdminCategoriesPage = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-semibold mb-4">Admin - Categories</h1>
+    <div className="container mx-auto p-4 py-20">
+      <h1 className="text-2xl font-semibold mb-4">
+        <Link href={"/admin/reda"}>{`<-- back`}</Link> <br />
+        Admin - Categories
+      </h1>
 
       {submitError && (
         <div

@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function AdminDashboard() {
   return (
-    <div>
+    <div className="py-24">
       <h1 className="text-3xl font-semibold mb-6">
         Welcome to the Admin Dashboard
       </h1>

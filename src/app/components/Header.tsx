@@ -309,9 +309,15 @@ export default function Header() {
           </div> */}
         </div>
 
-        <Link
+        {/* <Link
           href="/"
           className="text-2xl font-bold text-center absolute left-1/2 transform -translate-x-1/2 text-primary hover:text-secondary transition-colors duration-300"
+        >
+          MOIÉTOI
+        </Link> */}
+        <Link
+          href="/"
+          className="text-xl sm:text-2xl font-bold text-center absolute left-1/2 transform -translate-x-1/2 text-primary hover:text-secondary transition-colors duration-300"
         >
           MOIÉTOI
         </Link>

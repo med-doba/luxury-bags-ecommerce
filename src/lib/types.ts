@@ -47,6 +47,7 @@ export interface Product {
   sellerRating: number;
   colors: string[];
   sizes: string[];
+  stock: number; // Added stock field
 }
 
 export interface Category {

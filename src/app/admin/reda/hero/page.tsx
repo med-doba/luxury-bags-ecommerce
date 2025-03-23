@@ -276,6 +276,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Upload, LinkIcon, X } from "lucide-react";
+import Link from "next/link";
 
 interface HeroSection {
   id: string;
@@ -444,8 +445,11 @@ export default function HeroAdmin() {
   };
 
   return (
-    <div>
-      <h1 className="text-3xl font-semibold mb-6">Manage Hero Sections</h1>
+    <div className="py-20 p-4">
+      <h1 className="text-3xl font-semibold mb-6">
+        <Link href={"/admin/reda"}>{`<-- back`}</Link> <br />
+        Manage Hero Sections
+      </h1>
 
       <form
         onSubmit={handleAddHero}

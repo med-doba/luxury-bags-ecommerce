@@ -1810,6 +1810,415 @@
 //   );
 // }
 
+// "use client";
+
+// import { useState, useEffect } from "react";
+// import Image from "next/image";
+// import { useRouter } from "next/navigation";
+// import Link from "next/link";
+// import {
+//   ShoppingBag,
+//   Truck,
+//   Minus,
+//   Plus,
+//   ChevronLeft,
+//   ChevronRight,
+// } from "lucide-react";
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// import type { Product } from "@/lib/types";
+// import { useCart } from "@/app/contexts/CartContext";
+// import ProductDetailsSkeleton from "./ProductDetailsSkeleton";
+
+// // Replace the hideScrollbarStyle with this enhanced version
+// const hideScrollbarStyle = `
+//   .hide-scrollbar::-webkit-scrollbar {
+//     display: none;
+//   }
+//   .hide-scrollbar {
+//     -ms-overflow-style: none;
+//     scrollbar-width: none;
+//   }
+
+//   .product-image-zoom {
+//     transition: transform 0.3s ease;
+//   }
+
+//   .product-image-zoom:hover {
+//     transform: scale(1.05);
+//   }
+
+//   .thumbnail-active {
+//     border-color: #000;
+//     box-shadow: 0 0 0 2px #000;
+//   }
+
+//   .elegant-button {
+//     transition: all 0.3s ease;
+//   }
+
+//   .elegant-button:hover {
+//     transform: translateY(-2px);
+//   }
+// `;
+
+// export default function ProductDetails({ product }: { product: Product }) {
+//   const [quantity, setQuantity] = useState(1);
+//   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+//   const [isLoading, setIsLoading] = useState(true);
+//   const [isWishlist, setIsWishlist] = useState(false);
+
+//   const router = useRouter();
+//   const { addItem } = useCart();
+
+//   const allImages = [product.imageUrl, ...product.images.map((img) => img.url)];
+
+//   useEffect(() => {
+//     const timer = setTimeout(() => setIsLoading(false), 1000);
+//     return () => clearTimeout(timer);
+//   }, []);
+
+//   const handleAddToCart = () => {
+//     addItem({
+//       id: product.id,
+//       name: product.name,
+//       price: product.price,
+//       quantity,
+//       imageUrl: product.imageUrl,
+//       color: product.color,
+//       size: product.size,
+//     });
+//   };
+
+//   const handleBuyNow = () => {
+//     handleAddToCart();
+//     router.push("/checkout");
+//   };
+
+//   const decreaseQuantity = () => quantity > 1 && setQuantity(quantity - 1);
+//   const increaseQuantity = () => setQuantity(quantity + 1);
+
+//   const goToPrevImage = () => {
+//     setCurrentImageIndex((prev) =>
+//       prev === 0 ? allImages.length - 1 : prev - 1
+//     );
+//   };
+
+//   const goToNextImage = () => {
+//     setCurrentImageIndex((prev) =>
+//       prev === allImages.length - 1 ? 0 : prev + 1
+//     );
+//   };
+
+//   if (isLoading) return <ProductDetailsSkeleton />;
+
+//   // Replace the return statement with this enhanced version
+//   return (
+//     <>
+//       <style jsx global>
+//         {hideScrollbarStyle}
+//       </style>
+//       <div className="container mx-auto px-4 py-8 md:py-16 lg:py-24 max-w-7xl">
+//         <div className="block w-full overflow-x-auto mb-4 md:mb-8">
+//           <div className="text-xs sm:text-sm breadcrumbs">
+//             <ul className="flex flex-nowrap gap-1 sm:gap-2 text-gray-600">
+//               <li className="whitespace-nowrap">
+//                 <Link href="/" className="hover:text-black transition-colors">
+//                   Accueil
+//                 </Link>{" "}
+//                 /
+//               </li>
+//               <li className="whitespace-nowrap">
+//                 <Link
+//                   href="/shop"
+//                   className="hover:text-black transition-colors"
+//                 >
+//                   Produits
+//                 </Link>{" "}
+//                 /
+//               </li>
+//               <li className="whitespace-nowrap text-black font-medium truncate max-w-[150px] sm:max-w-none">
+//                 {product.name}
+//               </li>
+//             </ul>
+//           </div>
+//         </div>
+
+//         <div className="grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-16">
+//           {/* Image gallery */}
+//           <div className="space-y-3 md:space-y-6">
+//             <div className="aspect-square overflow-hidden rounded-lg md:rounded-xl border border-gray-200 relative group">
+//               <Image
+//                 src={allImages[currentImageIndex] || "/placeholder.svg"}
+//                 alt={product.name}
+//                 className="w-full h-full object-cover product-image-zoom"
+//                 width={800}
+//                 height={800}
+//                 priority
+//               />
+//               <button
+//                 onClick={goToPrevImage}
+//                 className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-white/90 p-1.5 md:p-2 rounded-full shadow-md hover:bg-white transition-all opacity-70 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100"
+//                 aria-label="Previous image"
+//               >
+//                 <ChevronLeft className="h-4 w-4 md:h-5 md:w-5" />
+//               </button>
+//               <button
+//                 onClick={goToNextImage}
+//                 className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-white/90 p-1.5 md:p-2 rounded-full shadow-md hover:bg-white transition-all opacity-70 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100"
+//                 aria-label="Next image"
+//               >
+//                 <ChevronRight className="h-4 w-4 md:h-5 md:w-5" />
+//               </button>
+//               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+//                 {allImages.map((_, index) => (
+//                   <button
+//                     key={`indicator-${index}`}
+//                     onClick={() => setCurrentImageIndex(index)}
+//                     className={`w-2 h-2 rounded-full ${
+//                       currentImageIndex === index ? "bg-black" : "bg-gray-300"
+//                     }`}
+//                     aria-label={`Go to image ${index + 1}`}
+//                   />
+//                 ))}
+//               </div>
+//             </div>
+//             <div className="relative px-2 md:px-4">
+//               <div className="overflow-x-auto pb-2 hide-scrollbar">
+//                 <div className="flex gap-2 md:gap-3 min-w-max justify-center">
+//                   {allImages.map((image, index) => (
+//                     <button
+//                       key={index}
+//                       onClick={() => setCurrentImageIndex(index)}
+//                       className="focus:outline-none"
+//                     >
+//                       <div
+//                         className={`aspect-square w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 overflow-hidden rounded-lg border transition-all ${
+//                           currentImageIndex === index
+//                             ? "thumbnail-active"
+//                             : "border-gray-200 hover:border-gray-400"
+//                         }`}
+//                       >
+//                         <Image
+//                           src={image || "/placeholder.svg"}
+//                           alt={`${product.name} view ${index + 1}`}
+//                           width={100}
+//                           height={100}
+//                           className="w-full h-full object-cover"
+//                         />
+//                       </div>
+//                     </button>
+//                   ))}
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* Product Info */}
+//           <div className="flex flex-col justify-start md:justify-center pt-2 md:pt-0">
+//             <div className="space-y-5 md:space-y-8">
+//               <div>
+//                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 md:mb-3 tracking-tight">
+//                   {product.name}
+//                 </h1>
+//                 <div className="flex flex-wrap items-center gap-2 md:gap-4 mb-3 md:mb-4">
+//                   <p className="text-xl sm:text-2xl md:text-3xl font-semibold">
+//                     {product.price.toLocaleString()} MAD
+//                   </p>
+//                   {product.originalPrice > product.price && (
+//                     <>
+//                       <p className="line-through text-muted-foreground">
+//                         {product.originalPrice.toLocaleString()} MAD
+//                       </p>
+//                       <div className="bg-red-50 text-red-600 text-sm px-3 py-1 rounded-full font-medium">
+//                         {Math.round(
+//                           ((product.originalPrice - product.price) /
+//                             product.originalPrice) *
+//                             100
+//                         )}
+//                         % OFF
+//                       </div>
+//                     </>
+//                   )}
+//                 </div>
+//                 <div className="h-px bg-gray-200 w-full my-4 md:my-6"></div>
+//               </div>
+
+//               <div className="grid gap-4 md:gap-6">
+//                 <div>
+//                   <h3 className="font-medium mb-2 md:mb-3 text-xs sm:text-sm uppercase tracking-wider">
+//                     Color
+//                   </h3>
+//                   <div className="flex items-center gap-3">
+//                     <div
+//                       className="w-8 h-8 rounded-full border shadow-sm ring-2 ring-offset-2 ring-black"
+//                       style={{ backgroundColor: product.color }}
+//                     />
+//                     <span className="text-sm capitalize">{product.color}</span>
+//                   </div>
+//                 </div>
+
+//                 <div>
+//                   <h3 className="font-medium mb-2 md:mb-3 text-xs sm:text-sm uppercase tracking-wider">
+//                     Size
+//                   </h3>
+//                   <div className="inline-block px-3 py-1.5 sm:px-4 sm:py-2 border border-black text-sm rounded-md font-medium">
+//                     {product.size}
+//                   </div>
+//                 </div>
+
+//                 <div>
+//                   <h3 className="font-medium mb-2 md:mb-3 text-xs sm:text-sm uppercase tracking-wider">
+//                     Quantity
+//                   </h3>
+//                   <div className="flex items-center gap-3">
+//                     <button
+//                       onClick={decreaseQuantity}
+//                       disabled={quantity <= 1}
+//                       className="w-9 h-9 sm:w-10 sm:h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors disabled:opacity-50"
+//                     >
+//                       <Minus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+//                     </button>
+//                     <span className="w-8 sm:w-10 text-center font-medium">
+//                       {quantity}
+//                     </span>
+//                     <button
+//                       onClick={increaseQuantity}
+//                       className="w-9 h-9 sm:w-10 sm:h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors"
+//                     >
+//                       <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+//                     </button>
+//                   </div>
+//                 </div>
+//               </div>
+
+//               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mt-2">
+//                 <button
+//                   onClick={handleAddToCart}
+//                   className="py-3 sm:py-3.5 px-4 sm:px-6 bg-black text-white rounded-full hover:bg-gray-800 flex items-center justify-center elegant-button font-medium text-sm sm:text-base"
+//                 >
+//                   <ShoppingBag className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Ajouter
+//                   au panier
+//                 </button>
+//                 <button
+//                   onClick={handleBuyNow}
+//                   className="py-3 sm:py-3.5 px-4 sm:px-6 border-2 border-black text-black rounded-full hover:bg-black hover:text-white transition-colors duration-300 font-medium elegant-button text-sm sm:text-base"
+//                 >
+//                   Acheter maintenant
+//                 </button>
+//               </div>
+
+//               <div className="bg-gray-50 p-4 md:p-5 rounded-lg md:rounded-xl mt-2">
+//                 <div className="flex items-center gap-2 md:gap-3">
+//                   <Truck className="h-4 w-4 md:h-5 md:w-5 text-gray-700 flex-shrink-0" />
+//                   <p className="text-xs sm:text-sm text-gray-700">
+//                     Livraison Gratuite dans certaines villes.{" "}
+//                     <span className="underline font-medium">
+//                       Consultez les détails
+//                     </span>
+//                   </p>
+//                 </div>
+//               </div>
+
+//               <Tabs defaultValue="description" className="mt-4 md:mt-6">
+//                 <TabsList className="grid w-full grid-cols-3 rounded-lg md:rounded-xl bg-gray-100 p-0.5 md:p-1">
+//                   <TabsTrigger
+//                     value="description"
+//                     className="text-xs sm:text-sm py-1.5 md:py-2 rounded-md md:rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm"
+//                   >
+//                     Description
+//                   </TabsTrigger>
+//                   <TabsTrigger
+//                     value="details"
+//                     className="text-xs sm:text-sm py-1.5 md:py-2 rounded-md md:rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm"
+//                   >
+//                     Détails
+//                   </TabsTrigger>
+//                   <TabsTrigger
+//                     value="shipping"
+//                     className="text-xs sm:text-sm py-1.5 md:py-2 rounded-md md:rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm"
+//                   >
+//                     Livraison
+//                   </TabsTrigger>
+//                 </TabsList>
+//                 <TabsContent
+//                   value="description"
+//                   className="pt-4 md:pt-6 text-gray-600 leading-relaxed text-sm sm:text-base"
+//                 >
+//                   {product.description}
+//                 </TabsContent>
+//                 <TabsContent
+//                   value="details"
+//                   className="pt-4 md:pt-6 text-gray-600 text-sm sm:text-base"
+//                 >
+//                   <ul className="space-y-1.5 md:space-y-2">
+//                     <li className="flex items-center gap-2">
+//                       <span className="w-2 h-2 bg-black rounded-full"></span>
+//                       <span>
+//                         Nom:{" "}
+//                         <span className="font-medium text-black">
+//                           {product.name}
+//                         </span>
+//                       </span>
+//                     </li>
+//                     <li className="flex items-center gap-2">
+//                       <span className="w-2 h-2 bg-black rounded-full"></span>
+//                       <span>
+//                         Catégorie:{" "}
+//                         <span className="font-medium text-black">
+//                           {product.category?.name}
+//                         </span>
+//                       </span>
+//                     </li>
+//                     <li className="flex items-center gap-2">
+//                       <span className="w-2 h-2 bg-black rounded-full"></span>
+//                       <span>
+//                         Évaluation:{" "}
+//                         <span className="font-medium text-black">
+//                           {product.rating || 5} étoiles
+//                         </span>
+//                       </span>
+//                     </li>
+//                   </ul>
+//                 </TabsContent>
+//                 <TabsContent
+//                   value="shipping"
+//                   className="pt-4 md:pt-6 text-gray-600 text-sm sm:text-base"
+//                 >
+//                   <div className="space-y-3 md:space-y-4">
+//                     <p className="font-medium text-black">
+//                       Délais de livraison:
+//                     </p>
+//                     <ul className="space-y-1.5 md:space-y-2">
+//                       <li className="flex items-center gap-2">
+//                         <span className="w-2 h-2 bg-black rounded-full"></span>
+//                         <span>
+//                           Rabat:{" "}
+//                           <span className="font-medium text-black">
+//                             Mercredi & Samedi
+//                           </span>
+//                         </span>
+//                       </li>
+//                       <li className="flex items-center gap-2">
+//                         <span className="w-2 h-2 bg-black rounded-full"></span>
+//                         <span>
+//                           Casablanca:{" "}
+//                           <span className="font-medium text-black">
+//                             Samedi uniquement
+//                           </span>
+//                         </span>
+//                       </li>
+//                     </ul>
+//                   </div>
+//                 </TabsContent>
+//               </Tabs>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </>
+//   );
+// }
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -1823,6 +2232,7 @@ import {
   Plus,
   ChevronLeft,
   ChevronRight,
+  AlertCircle,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Product } from "@/lib/types";
@@ -1872,12 +2282,25 @@ export default function ProductDetails({ product }: { product: Product }) {
 
   const allImages = [product.imageUrl, ...product.images.map((img) => img.url)];
 
+  // Check if product is out of stock
+  const isOutOfStock = product.stock <= 0;
+
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1000);
     return () => clearTimeout(timer);
   }, []);
 
+  // Ensure quantity doesn't exceed available stock
+  useEffect(() => {
+    if (product.stock > 0 && quantity > product.stock) {
+      setQuantity(product.stock);
+    }
+  }, [product.stock, quantity]);
+
   const handleAddToCart = () => {
+    // Prevent adding to cart if out of stock
+    if (isOutOfStock) return;
+
     addItem({
       id: product.id,
       name: product.name,
@@ -1890,12 +2313,21 @@ export default function ProductDetails({ product }: { product: Product }) {
   };
 
   const handleBuyNow = () => {
+    // Prevent buying if out of stock
+    if (isOutOfStock) return;
+
     handleAddToCart();
     router.push("/checkout");
   };
 
   const decreaseQuantity = () => quantity > 1 && setQuantity(quantity - 1);
-  const increaseQuantity = () => setQuantity(quantity + 1);
+
+  const increaseQuantity = () => {
+    // Don't allow increasing beyond available stock
+    if (quantity < product.stock) {
+      setQuantity(quantity + 1);
+    }
+  };
 
   const goToPrevImage = () => {
     setCurrentImageIndex((prev) =>
@@ -1911,13 +2343,12 @@ export default function ProductDetails({ product }: { product: Product }) {
 
   if (isLoading) return <ProductDetailsSkeleton />;
 
-  // Replace the return statement with this enhanced version
   return (
     <>
       <style jsx global>
         {hideScrollbarStyle}
       </style>
-      <div className="container mx-auto px-4 py-8 md:py-16 lg:py-24 max-w-7xl">
+      <div className="container mx-auto px-4 py-24 md:py-16 lg:py-24 max-w-7xl">
         <div className="block w-full overflow-x-auto mb-4 md:mb-8">
           <div className="text-xs sm:text-sm breadcrumbs">
             <ul className="flex flex-nowrap gap-1 sm:gap-2 text-gray-600">
@@ -1981,6 +2412,16 @@ export default function ProductDetails({ product }: { product: Product }) {
                   />
                 ))}
               </div>
+
+              {/* Out of stock overlay */}
+              {isOutOfStock && (
+                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                  <div className="bg-white px-6 py-3 rounded-md text-red-600 font-bold flex items-center">
+                    <AlertCircle className="mr-2 h-5 w-5" />
+                    RUPTURE DE STOCK
+                  </div>
+                </div>
+              )}
             </div>
             <div className="relative px-2 md:px-4">
               <div className="overflow-x-auto pb-2 hide-scrollbar">
@@ -2040,6 +2481,22 @@ export default function ProductDetails({ product }: { product: Product }) {
                     </>
                   )}
                 </div>
+
+                {/* Stock information */}
+                <div className="flex items-center mt-2">
+                  {isOutOfStock ? (
+                    <span className="text-red-600 font-medium flex items-center">
+                      <AlertCircle className="mr-1 h-4 w-4" />
+                      Rupture de stock
+                    </span>
+                  ) : (
+                    <span className="text-green-600 font-medium">
+                      En stock ({product.stock} disponible
+                      {product.stock > 1 ? "s" : ""})
+                    </span>
+                  )}
+                </div>
+
                 <div className="h-px bg-gray-200 w-full my-4 md:my-6"></div>
               </div>
 
@@ -2073,8 +2530,8 @@ export default function ProductDetails({ product }: { product: Product }) {
                   <div className="flex items-center gap-3">
                     <button
                       onClick={decreaseQuantity}
-                      disabled={quantity <= 1}
-                      className="w-9 h-9 sm:w-10 sm:h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors disabled:opacity-50"
+                      disabled={quantity <= 1 || isOutOfStock}
+                      className="w-9 h-9 sm:w-10 sm:h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Minus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </button>
@@ -2083,7 +2540,8 @@ export default function ProductDetails({ product }: { product: Product }) {
                     </span>
                     <button
                       onClick={increaseQuantity}
-                      className="w-9 h-9 sm:w-10 sm:h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors"
+                      disabled={quantity >= product.stock || isOutOfStock}
+                      className="w-9 h-9 sm:w-10 sm:h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </button>
@@ -2094,14 +2552,24 @@ export default function ProductDetails({ product }: { product: Product }) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mt-2">
                 <button
                   onClick={handleAddToCart}
-                  className="py-3 sm:py-3.5 px-4 sm:px-6 bg-black text-white rounded-full hover:bg-gray-800 flex items-center justify-center elegant-button font-medium text-sm sm:text-base"
+                  disabled={isOutOfStock}
+                  className={`py-3 sm:py-3.5 px-4 sm:px-6 rounded-full flex items-center justify-center elegant-button font-medium text-sm sm:text-base ${
+                    isOutOfStock
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-black text-white hover:bg-gray-800"
+                  }`}
                 >
                   <ShoppingBag className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Ajouter
                   au panier
                 </button>
                 <button
                   onClick={handleBuyNow}
-                  className="py-3 sm:py-3.5 px-4 sm:px-6 border-2 border-black text-black rounded-full hover:bg-black hover:text-white transition-colors duration-300 font-medium elegant-button text-sm sm:text-base"
+                  disabled={isOutOfStock}
+                  className={`py-3 sm:py-3.5 px-4 sm:px-6 border-2 rounded-full transition-colors duration-300 font-medium elegant-button text-sm sm:text-base ${
+                    isOutOfStock
+                      ? "border-gray-300 text-gray-500 cursor-not-allowed"
+                      : "border-black text-black hover:bg-black hover:text-white"
+                  }`}
                 >
                   Acheter maintenant
                 </button>
@@ -2175,6 +2643,23 @@ export default function ProductDetails({ product }: { product: Product }) {
                         Évaluation:{" "}
                         <span className="font-medium text-black">
                           {product.rating || 5} étoiles
+                        </span>
+                      </span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="w-2 h-2 bg-black rounded-full"></span>
+                      <span>
+                        Stock:{" "}
+                        <span
+                          className={`font-medium ${
+                            isOutOfStock ? "text-red-600" : "text-black"
+                          }`}
+                        >
+                          {isOutOfStock
+                            ? "Rupture de stock"
+                            : `${product.stock} disponible${
+                                product.stock > 1 ? "s" : ""
+                              }`}
                         </span>
                       </span>
                     </li>

@@ -36,6 +36,7 @@ model Product {
   size        String
   description String @db.LongText  // ✅ Fix for MySQL Text
   featured    Boolean  @default(false)
+  stock       Int      @default(5)  // Added stock field with default value of 0
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   images      ProductImage[]

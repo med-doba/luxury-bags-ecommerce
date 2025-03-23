@@ -1,127 +1,6 @@
 // "use client";
 
 // import { useState, useEffect } from "react";
-// import Link from "next/link";
-// import Image from "next/image";
-// import { Filter } from "lucide-react";
-// import type { Product } from "@/lib/types";
-// import FilterDrawer from "@/app/components/FilterDrawer";
-// import CategorySection from "@/app/components/CategorySection";
-// import { useCloseOnNavigation } from "@/hooks/useCloseOnNavigation";
-
-// export default function ShopPage() {
-//   const [isFilterOpen, setIsFilterOpen] = useState(false);
-//   const [products, setProducts] = useState<Product[]>([]);
-//   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-
-//   // useCloseOnNavigation(() => {
-//   //   setIsFilterOpen(false);
-//   // });
-
-//   useEffect(() => {
-//     async function fetchProducts() {
-//       try {
-//         const response = await fetch("/api/products");
-//         if (!response.ok) {
-//           throw new Error("Failed to fetch products");
-//         }
-//         const data = await response.json();
-//         setProducts(data);
-//         setFilteredProducts(data);
-//       } catch (error) {
-//         console.error("Error fetching products:", error);
-//       }
-//     }
-
-//     fetchProducts();
-//   }, []);
-
-//   const handleApplyFilters = (filters: Record<string, string[]>) => {
-//     let filtered = [...products];
-
-//     Object.entries(filters).forEach(([category, selectedOptions]) => {
-//       if (selectedOptions.length > 0) {
-//         filtered = filtered.filter((product) => {
-//           switch (category) {
-//             case "colours":
-//               return selectedOptions.includes(product.color.toUpperCase());
-//             case "sizes":
-//               return selectedOptions.includes(product.size.toUpperCase());
-//             case "categories":
-//               return selectedOptions.includes(
-//                 product.category?.name?.toUpperCase() || ""
-//               );
-//             case "price":
-//               const [min, max] = selectedOptions.map(Number);
-//               return product.price >= min && product.price <= max;
-//             default:
-//               return true;
-//           }
-//         });
-//       }
-//     });
-
-//     setFilteredProducts(filtered);
-//   };
-
-//   return (
-//     <div className="bg-background min-h-screen">
-//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-//         <div className="flex justify-between items-center mb-8">
-//           <h1 className="text-4xl font-bold text-primary">
-//             Acheter tous les sacs
-//           </h1>
-//           {/* <button
-//             onClick={() => setIsFilterOpen(true)}
-//             className="flex items-center space-x-2 text-text hover:text-primary transition-colors"
-//           >
-//             <Filter className="h-5 w-5" />
-//             <span className="text-sm font-medium">Filters</span>
-//           </button> */}
-//         </div>
-
-//         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-//           {filteredProducts.map((product) => (
-//             <Link
-//               href={`/shop/${product.id}`}
-//               key={product.id}
-//               className="group"
-//             >
-//               <div className="relative w-full aspect-square overflow-hidden rounded-lg bg-gray-200">
-//                 <Image
-//                   src={product.imageUrl || "/placeholder.svg"}
-//                   alt={product.name}
-//                   fill
-//                   className="object-cover object-center group-hover:opacity-75 transition-opacity duration-300"
-//                   sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-//                 />
-//               </div>
-//               <div className="mt-4 space-y-1">
-//                 <h3 className="text-sm text-gray-700">{product.name}</h3>
-//                 <p className="text-lg font-medium text-gray-900">
-//                   {/* {parseFloat(product.price).toFixed(2)} MAD */}
-//                   {Number(product.price)?.toFixed(2) ?? "0.00"} MAD
-//                 </p>
-//               </div>
-//             </Link>
-//           ))}
-//         </div>
-
-//         {/* <CategorySection /> */}
-
-//         <FilterDrawer
-//           isOpen={isFilterOpen}
-//           onClose={() => setIsFilterOpen(false)}
-//           onApply={handleApplyFilters}
-//         />
-//       </div>
-//     </div>
-//   );
-// }
-
-// "use client";
-
-// import { useState, useEffect } from "react";
 // import { useSearchParams } from "next/navigation";
 // import Link from "next/link";
 // import Image from "next/image";
@@ -132,7 +11,7 @@
 
 // export default function ShopPage() {
 //   const searchParams = useSearchParams();
-//   const categoryId = searchParams.get("category");
+//   const categoryId = searchParams?.get("category") || null;
 
 //   const [isFilterOpen, setIsFilterOpen] = useState(false);
 //   const [products, setProducts] = useState<Product[]>([]);
@@ -179,22 +58,25 @@
 //     async function fetchProducts() {
 //       setIsLoading(true);
 //       try {
-//         const response = await fetch("/api/products");
-//         if (!response.ok) {
-//           throw new Error("Failed to fetch products");
-//         }
-//         const data = await response.json();
-//         setProducts(data);
+//         // Use different endpoints based on whether a category is selected
+//         const url = categoryId
+//           ? `/api/products/by-category/${categoryId}`
+//           : "/api/products";
 
-//         // Filter products by category if a category is selected
-//         if (categoryId) {
-//           const filtered = data.filter(
-//             (product: Product) => product.categoryId === categoryId
-//           );
-//           setFilteredProducts(filtered);
-//         } else {
-//           setFilteredProducts(data);
+//         const response = await fetch(url);
+//         if (!response.ok) {
+//           throw new Error(`Failed to fetch products: ${response.statusText}`);
 //         }
+
+//         const data = await response.json();
+//         console.log(
+//           `Fetched ${data.length} products${
+//             categoryId ? ` for category ${categoryId}` : ""
+//           }`
+//         );
+
+//         setProducts(data);
+//         setFilteredProducts(data);
 //       } catch (error) {
 //         console.error("Error fetching products:", error);
 //       } finally {
@@ -208,14 +90,7 @@
 //   const handleApplyFilters = (filters: Record<string, string[]>) => {
 //     let filtered = [...products];
 
-//     // If a category is selected from the URL, apply that filter first
-//     if (categoryId) {
-//       filtered = filtered.filter(
-//         (product) => product.categoryId === categoryId
-//       );
-//     }
-
-//     // Then apply the other filters
+//     // Apply filters
 //     Object.entries(filters).forEach(([category, selectedOptions]) => {
 //       if (selectedOptions.length > 0) {
 //         filtered = filtered.filter((product) => {
@@ -246,20 +121,20 @@
 
 //   return (
 //     <div className="bg-background min-h-screen">
-//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
 //         <div className="flex justify-between items-center mb-8">
 //           <h1 className="text-4xl font-bold text-primary">
 //             {selectedCategory
 //               ? `${selectedCategory.name}`
 //               : "Acheter tous les sacs"}
 //           </h1>
-//           <button
+//           {/* <button
 //             onClick={() => setIsFilterOpen(true)}
 //             className="flex items-center space-x-2 text-text hover:text-primary transition-colors"
 //           >
 //             <Filter className="h-5 w-5" />
 //             <span className="text-sm font-medium">Filters</span>
-//           </button>
+//           </button> */}
 //         </div>
 
 //         {isLoading ? (
@@ -334,7 +209,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Filter } from "lucide-react";
+import { Filter, AlertCircle } from "lucide-react";
 import type { Product, Category } from "@/lib/types";
 // import FilterDrawer from "@/app/components/FilterDrawer";
 import { useCloseOnNavigation } from "@/hooks/useCloseOnNavigation";
@@ -439,6 +314,14 @@ export default function ShopPage() {
             case "price":
               const [min, max] = selectedOptions.map(Number);
               return product.price >= min && product.price <= max;
+            case "stock":
+              // Add stock filter
+              if (selectedOptions.includes("IN_STOCK")) {
+                return product.stock > 0;
+              } else if (selectedOptions.includes("OUT_OF_STOCK")) {
+                return product.stock <= 0;
+              }
+              return true;
             default:
               return true;
           }
@@ -451,20 +334,20 @@ export default function ShopPage() {
 
   return (
     <div className="bg-background min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold text-primary">
             {selectedCategory
               ? `${selectedCategory.name}`
               : "Acheter tous les sacs"}
           </h1>
-          {/* <button
+          <button
             onClick={() => setIsFilterOpen(true)}
             className="flex items-center space-x-2 text-text hover:text-primary transition-colors"
           >
             <Filter className="h-5 w-5" />
             <span className="text-sm font-medium">Filters</span>
-          </button> */}
+          </button>
         </div>
 
         {isLoading ? (
@@ -497,12 +380,31 @@ export default function ShopPage() {
                     className="object-cover object-center group-hover:opacity-75 transition-opacity duration-300"
                     sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                   />
+
+                  {/* Out of stock overlay */}
+                  {product.stock <= 0 && (
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                      <div className="bg-white px-3 py-1 rounded-md text-red-600 font-bold text-sm flex items-center">
+                        <AlertCircle className="mr-1 h-4 w-4" />
+                        RUPTURE DE STOCK
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className="mt-4 space-y-1">
                   <h3 className="text-sm text-gray-700">{product.name}</h3>
-                  <p className="text-lg font-medium text-gray-900">
-                    {Number(product.price)?.toFixed(2) ?? "0.00"} MAD
-                  </p>
+                  <div className="flex justify-between items-center">
+                    <p className="text-lg font-medium text-gray-900">
+                      {Number(product.price)?.toFixed(2) ?? "0.00"} MAD
+                    </p>
+                    {product.stock > 0 ? (
+                      <span className="text-xs text-green-600">En stock</span>
+                    ) : (
+                      <span className="text-xs text-red-600">
+                        Rupture de stock
+                      </span>
+                    )}
+                  </div>
                 </div>
               </Link>
             ))}

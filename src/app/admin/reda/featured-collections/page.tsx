@@ -93,6 +93,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 
 interface Product {
@@ -167,8 +168,10 @@ export default function FeaturedCollectionsAdmin() {
   };
 
   return (
-    <div>
+    <div className="py-20 p-4">
       <h1 className="text-3xl font-semibold mb-6">
+        <Link className=" rounded-sm " href={"/admin/reda"}>{`<-- back`}</Link>{" "}
+        <br />
         Manage Featured Collections
       </h1>
 
