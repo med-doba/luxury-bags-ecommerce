@@ -2506,10 +2506,10 @@ export default function ProductDetails({ product }: { product: Product }) {
                     Color
                   </h3>
                   <div className="flex items-center gap-3">
-                    <div
+		  {/* <div
                       className="w-8 h-8 rounded-full border shadow-sm ring-2 ring-offset-2 ring-black"
                       style={{ backgroundColor: product.color }}
-                    />
+                    />*/}
                     <span className="text-sm capitalize">{product.color}</span>
                   </div>
                 </div>

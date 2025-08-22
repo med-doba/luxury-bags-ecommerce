@@ -205,7 +205,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -227,10 +227,22 @@ export default function ShopPage() {
   );
   const [isLoading, setIsLoading] = useState(true);
 
+ // const initialRenderRef = useRef(true);
+
+
   // Close filter drawer on navigation
   useCloseOnNavigation(() => {
     setIsFilterOpen(false);
   });
+
+  useEffect(() => {
+  // Only scroll on category changes, not on initial render
+ // if (initialRenderRef.current) {
+   // initialRenderRef.current = false;
+ // } else {
+    window.scrollTo(0, 0);
+ // }
+}, []);
 
   // Fetch categories
   useEffect(() => {
@@ -341,13 +353,13 @@ export default function ShopPage() {
               ? `${selectedCategory.name}`
               : "Acheter tous les sacs"}
           </h1>
-          <button
+	  {/*<button
             onClick={() => setIsFilterOpen(true)}
             className="flex items-center space-x-2 text-text hover:text-primary transition-colors"
           >
             <Filter className="h-5 w-5" />
             <span className="text-sm font-medium">Filters</span>
-          </button>
+          </button>*/}
         </div>
 
         {isLoading ? (
