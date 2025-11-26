@@ -14,6 +14,7 @@ interface Product {
   name: string;
   price?: number; // Legacy field, optional
   imageUrl: string;
+  productType?: string; // Product type: "bag" or "shoes"
   category: {
     id: string;
     name: string;
@@ -67,6 +68,7 @@ export default function ProductsAdmin() {
     featured: false,
     onSale: false,
     salePercentage: "",
+    productType: "bag", // Default to bag
   });
   const [colorVariants, setColorVariants] = useState<ColorVariantData[]>([]);
   const [imageUploadMethod, setImageUploadMethod] =
@@ -213,6 +215,7 @@ export default function ProductsAdmin() {
       featured: false,
       onSale: false,
       salePercentage: "",
+      productType: "bag", // Default to bag
     });
     setColorVariants([]);
     setMainImageFile(null);
@@ -229,6 +232,7 @@ export default function ProductsAdmin() {
       categoryId: product.category?.id || "",
       onSale: product.onSale || false,
       salePercentage: product.salePercentage || 0,
+      productType: product.productType || "bag", // Default to bag if not set
     });
 
     // Convert product color variants to ColorVariantData format
@@ -354,6 +358,7 @@ export default function ProductsAdmin() {
       formData.append("name", editingProduct.name);
       formData.append("description", editingProduct.description);
       formData.append("categoryId", editingProduct.categoryId || "");
+      formData.append("productType", editingProduct.productType || "bag");
       formData.append("featured", editingProduct.featured.toString());
       formData.append("onSale", (editingProduct.onSale || false).toString());
 
@@ -473,6 +478,29 @@ export default function ProductsAdmin() {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Product Type
+                </label>
+                <select
+                  value={newProduct.productType}
+                  onChange={(e) =>
+                    setNewProduct({
+                      ...newProduct,
+                      productType: e.target.value,
+                    })
+                  }
+                  className="w-full p-2 border rounded"
+                  required
+                >
+                  <option value="bag">Bag</option>
+                  <option value="shoes">Shoes</option>
+                </select>
+                <p className="text-xs text-gray-500 mt-1">
+                  This determines the available size options (bag sizes vs shoe sizes)
+                </p>
               </div>
 
               <div>
@@ -719,6 +747,7 @@ export default function ProductsAdmin() {
             onChange={setColorVariants}
             disabled={isSubmitting}
             basePrice={0}
+            productType={newProduct.productType}
           />
 
           {/* Submit Button */}
@@ -930,6 +959,29 @@ export default function ProductsAdmin() {
                         </option>
                       ))}
                     </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Product Type
+                    </label>
+                    <select
+                      value={editingProduct.productType || "bag"}
+                      onChange={(e) =>
+                        setEditingProduct({
+                          ...editingProduct,
+                          productType: e.target.value,
+                        })
+                      }
+                      className="w-full p-2 border rounded"
+                      required
+                    >
+                      <option value="bag">Bag</option>
+                      <option value="shoes">Shoes</option>
+                    </select>
+                    <p className="text-xs text-gray-500 mt-1">
+                      This determines the available size options (bag sizes vs shoe sizes)
+                    </p>
                   </div>
 
                   <div>
@@ -1185,6 +1237,7 @@ export default function ProductsAdmin() {
                 onChange={setEditColorVariants}
                 disabled={isEditSubmitting}
                 basePrice={0}
+                productType={editingProduct?.productType || "bag"}
               />
             </div>
 

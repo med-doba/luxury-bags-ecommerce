@@ -32,6 +32,7 @@ model Product {
   onSale          Boolean        @default(false)    // Whether product is on sale
   salePercentage  Int?           // Sale percentage (1-99)
   imageUrl        String         // Main product image
+  productType     String         @default("bag")    // Product type: "bag" or "shoes"
   category        Category?      @relation(fields: [categoryId], references: [id])
   categoryId      String?
   size            String?        // Made optional since we use size variants now

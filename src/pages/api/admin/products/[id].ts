@@ -145,6 +145,7 @@ export default async function handler(
         // Extract fields
         const name = (fields.name?.[0] as string) || "";
         const categoryId = (fields.categoryId?.[0] as string) || null;
+        const productType = (fields.productType?.[0] as string) || "bag";
         const description = (fields.description?.[0] as string) || "";
         const featured = (fields.featured?.[0] as string) === "true";
 
@@ -189,6 +190,7 @@ export default async function handler(
           featured,
           onSale,
           salePercentage,
+          productType, // Add product type
           price: 0, // Always 0 since we use variants for pricing
         };
 
@@ -332,7 +334,7 @@ export default async function handler(
             },
             sizeVariants: true,
           },
-        });
+        } as any);
 
         return res.status(200).json(finalProduct);
       });

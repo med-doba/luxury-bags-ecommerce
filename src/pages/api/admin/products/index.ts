@@ -510,6 +510,7 @@ export default async function handler(
         const name = (fields.name?.[0] as string) || "";
         const price = Number.parseFloat((fields.price?.[0] as string) || "0");
         const categoryId = (fields.categoryId?.[0] as string) || "";
+        const productType = (fields.productType?.[0] as string) || "bag"; // New product type field
         const color = (fields.color?.[0] as string) || ""; // Legacy field
         const size = (fields.size?.[0] as string) || ""; // Legacy field
         const description = (fields.description?.[0] as string) || "";
@@ -561,6 +562,7 @@ export default async function handler(
             salePercentage,
             onSale,
             imageUrl,
+            productType, // Add product type
             category: { connect: { id: categoryId } },
             color: color || "", // Legacy field, can be empty
             size: size || "", // Legacy field, can be empty

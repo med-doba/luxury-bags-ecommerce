@@ -6,12 +6,27 @@ import { X, Upload, Plus, Minus } from "lucide-react";
 
 // Removed predefined colors - now using custom color picker only
 
-// Size options for each color
-const SIZE_OPTIONS = [
+// Size options for bags
+const BAG_SIZE_OPTIONS = [
   { name: "MINI", value: "mini" },
   { name: "SMALL", value: "small" },
   { name: "MEDIUM", value: "medium" },
   { name: "LARGE", value: "large" },
+];
+
+// Size options for shoes
+const SHOES_SIZE_OPTIONS = [
+  { name: "35", value: "35" },
+  { name: "36", value: "36" },
+  { name: "37", value: "37" },
+  { name: "38", value: "38" },
+  { name: "39", value: "39" },
+  { name: "40", value: "40" },
+  { name: "41", value: "41" },
+  { name: "42", value: "42" },
+  { name: "43", value: "43" },
+  { name: "44", value: "44" },
+  { name: "45", value: "45" },
 ];
 
 export interface ColorSizeVariantData {
@@ -42,6 +57,7 @@ interface ColorVariantManagerProps {
   onChange: (colorVariants: ColorVariantData[]) => void;
   disabled?: boolean;
   basePrice?: number;
+  productType?: string; // "bag" or "shoes"
 }
 
 export default function ColorVariantManager({
@@ -49,6 +65,7 @@ export default function ColorVariantManager({
   onChange,
   disabled = false,
   basePrice = 0,
+  productType = "bag",
 }: ColorVariantManagerProps) {
   const [selectedColors, setSelectedColors] = useState<string[]>(
     colorVariants.map((cv) => cv.color)
@@ -62,6 +79,11 @@ export default function ColorVariantManager({
   const fileInputRefs = useRef<{ [color: string]: HTMLInputElement | null }>(
     {}
   );
+
+  // Helper function to get size options based on product type
+  const getSizeOptions = () => {
+    return productType === "shoes" ? SHOES_SIZE_OPTIONS : BAG_SIZE_OPTIONS;
+  };
 
   const addColorVariant = (color: string, colorHex: string) => {
     const newVariant: ColorVariantData = {
@@ -202,7 +224,8 @@ export default function ColorVariantManager({
   };
 
   const getSizeName = (sizeValue: string) => {
-    const sizeOption = SIZE_OPTIONS.find((s) => s.value === sizeValue);
+    const sizeOptions = getSizeOptions();
+    const sizeOption = sizeOptions.find((s) => s.value === sizeValue);
     return sizeOption?.name || sizeValue.toUpperCase();
   };
 
@@ -371,7 +394,7 @@ export default function ColorVariantManager({
 
                 {/* Size Selection */}
                 <div className="grid grid-cols-4 gap-2 mb-4">
-                  {SIZE_OPTIONS.map((size) => {
+                  {getSizeOptions().map((size) => {
                     const isSelected = variant.sizeVariants.some(
                       (sv) => sv.size === size.value
                     );
@@ -416,10 +439,11 @@ export default function ColorVariantManager({
                     <div className="space-y-2">
                       {variant.sizeVariants
                         .sort((a, b) => {
-                          const orderA = SIZE_OPTIONS.findIndex(
+                          const sizeOptions = getSizeOptions();
+                          const orderA = sizeOptions.findIndex(
                             (opt) => opt.value === a.size
                           );
-                          const orderB = SIZE_OPTIONS.findIndex(
+                          const orderB = sizeOptions.findIndex(
                             (opt) => opt.value === b.size
                           );
                           return orderA - orderB;
