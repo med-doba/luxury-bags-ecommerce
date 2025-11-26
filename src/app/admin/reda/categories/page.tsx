@@ -209,10 +209,22 @@ const AdminCategoriesPage = () => {
 
   return (
     <div className="container mx-auto p-4 py-20">
-      <h1 className="text-2xl font-semibold mb-4">
-        <Link href={"/admin/reda"}>{`<-- back`}</Link> <br />
-        Admin - Categories
-      </h1>
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Category Management
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Manage your product categories and their display images
+          </p>
+        </div>
+        <Link
+          href="/admin/reda"
+          className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
+        >
+          ← Back to Admin Dashboard
+        </Link>
+      </div>
 
       {submitError && (
         <div

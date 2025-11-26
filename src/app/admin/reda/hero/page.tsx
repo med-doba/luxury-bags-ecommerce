@@ -446,10 +446,22 @@ export default function HeroAdmin() {
 
   return (
     <div className="py-20 p-4">
-      <h1 className="text-3xl font-semibold mb-6">
-        <Link href={"/admin/reda"}>{`<-- back`}</Link> <br />
-        Manage Hero Sections
-      </h1>
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Hero Section Management
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Manage your website's hero sections and banners
+          </p>
+        </div>
+        <Link
+          href="/admin/reda"
+          className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
+        >
+          ← Back to Admin Dashboard
+        </Link>
+      </div>
 
       <form
         onSubmit={handleAddHero}

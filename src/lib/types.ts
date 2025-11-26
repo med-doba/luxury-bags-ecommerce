@@ -35,7 +35,7 @@ export interface Product {
   imageUrl: string;
   // category: Category;
   category?: Category | null; // Make category optional or nullable
-  color: string;
+  color: string | null; // Allow null from database
   size: string;
   description: string;
   featured: boolean;
@@ -48,6 +48,8 @@ export interface Product {
   colors: string[];
   sizes: string[];
   stock: number; // Added stock field
+  colorVariants?: ColorVariant[]; // Added color variants
+  sizeVariants?: SizeVariant[]; // Added size variants
 }
 
 export interface Category {
@@ -58,4 +60,32 @@ export interface Category {
 export interface ProductImage {
   id: string;
   url: string;
+}
+
+export interface ColorVariantImage {
+  id: string;
+  url: string;
+}
+
+export interface ColorVariant {
+  id: string;
+  color: string;
+  stock: number;
+  images: ColorVariantImage[];
+  sizeVariants?: ColorSizeVariant[]; // Nested size variants for each color
+}
+
+export interface SizeVariant {
+  id: string;
+  size: string;
+  stock: number;
+  price?: number;
+}
+
+export interface ColorSizeVariant {
+  id: string;
+  size: string;
+  stock: number;
+  price?: number;
+  colorVariantId: string;
 }

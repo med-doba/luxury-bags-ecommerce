@@ -227,8 +227,7 @@ export default function ShopPage() {
   );
   const [isLoading, setIsLoading] = useState(true);
 
- // const initialRenderRef = useRef(true);
-
+  // const initialRenderRef = useRef(true);
 
   // Close filter drawer on navigation
   useCloseOnNavigation(() => {
@@ -236,13 +235,13 @@ export default function ShopPage() {
   });
 
   useEffect(() => {
-  // Only scroll on category changes, not on initial render
- // if (initialRenderRef.current) {
-   // initialRenderRef.current = false;
- // } else {
+    // Only scroll on category changes, not on initial render
+    // if (initialRenderRef.current) {
+    // initialRenderRef.current = false;
+    // } else {
     window.scrollTo(0, 0);
- // }
-}, []);
+    // }
+  }, []);
 
   // Fetch categories
   useEffect(() => {
@@ -313,7 +312,9 @@ export default function ShopPage() {
         filtered = filtered.filter((product) => {
           switch (category) {
             case "colours":
-              return selectedOptions.includes(product.color.toUpperCase());
+              return selectedOptions.includes(
+                product.color?.toUpperCase() || ""
+              );
             case "sizes":
               return selectedOptions.includes(product.size.toUpperCase());
             case "categories":
@@ -353,7 +354,7 @@ export default function ShopPage() {
               ? `${selectedCategory.name}`
               : "Acheter tous les sacs"}
           </h1>
-	  {/*<button
+          {/*<button
             onClick={() => setIsFilterOpen(true)}
             className="flex items-center space-x-2 text-text hover:text-primary transition-colors"
           >

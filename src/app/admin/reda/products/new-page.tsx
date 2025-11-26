@@ -12,37 +12,25 @@ import ColorVariantManager, {
 interface Product {
   id: string;
   name: string;
-  price?: number; // Legacy field, optional
+  price: number;
   imageUrl: string;
   category: {
     id: string;
     name: string;
   };
   categoryId?: string;
-  size?: string; // Legacy field, optional
+  size: string;
   description: string;
   featured: boolean;
-  stock?: number; // Legacy field, optional
-  colorVariants?: {
+  stock: number;
+  colorVariants: {
     id: string;
     color: string;
     stock: number;
-    images?: {
+    images: {
       id: string;
       url: string;
     }[];
-    sizeVariants?: {
-      id: string;
-      size: string;
-      stock: number;
-      price?: number;
-    }[];
-  }[];
-  sizeVariants?: {
-    id: string;
-    size: string;
-    stock: number;
-    price?: number;
   }[];
 }
 
@@ -58,10 +46,13 @@ export default function ProductsAdmin() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [newProduct, setNewProduct] = useState({
     name: "",
+    price: 0,
     imageUrl: "",
     categoryId: "",
+    size: "",
     description: "",
     featured: false,
+    stock: 0,
   });
   const [colorVariants, setColorVariants] = useState<ColorVariantData[]>([]);
   const [imageUploadMethod, setImageUploadMethod] =
@@ -91,7 +82,7 @@ export default function ProductsAdmin() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch("/api/admin/products");
+      const response = await fetch("/api/admin/products-v2");
       if (!response.ok) throw new Error("Failed to fetch products");
       const data = await response.json();
       setProducts(data);
@@ -138,6 +129,44 @@ export default function ProductsAdmin() {
     }
   };
 
+  const uploadColorVariantImages = async (
+    colorVariants: ColorVariantData[]
+  ) => {
+    const uploadPromises = colorVariants.map(async (variant) => {
+      if (variant.newImages.length === 0) return variant;
+
+      const formData = new FormData();
+      variant.newImages.forEach((file) => {
+        formData.append("images", file);
+      });
+
+      try {
+        const response = await fetch("/api/admin/upload-image", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) throw new Error("Failed to upload images");
+
+        const { imageUrls } = await response.json();
+
+        return {
+          ...variant,
+          images: [
+            ...variant.images,
+            ...imageUrls.map((url: string) => ({ url, isExisting: false })),
+          ],
+          newImages: [], // Clear new images after upload
+        };
+      } catch (error) {
+        console.error(`Error uploading images for ${variant.color}:`, error);
+        return variant;
+      }
+    });
+
+    return Promise.all(uploadPromises);
+  };
+
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -166,7 +195,7 @@ export default function ProductsAdmin() {
         });
       });
 
-      const response = await fetch("/api/admin/products", {
+      const response = await fetch("/api/admin/products-v2", {
         method: "POST",
         body: formData,
       });
@@ -191,10 +220,13 @@ export default function ProductsAdmin() {
   const resetForm = () => {
     setNewProduct({
       name: "",
+      price: 0,
       imageUrl: "",
       categoryId: "",
+      size: "",
       description: "",
       featured: false,
+      stock: 0,
     });
     setColorVariants([]);
     setMainImageFile(null);
@@ -212,20 +244,19 @@ export default function ProductsAdmin() {
     });
 
     // Convert product color variants to ColorVariantData format
-    const editVariants: ColorVariantData[] =
-      product.colorVariants?.map((cv) => ({
+    const editVariants: ColorVariantData[] = product.colorVariants.map(
+      (cv) => ({
         id: cv.id,
         color: cv.color,
         stock: cv.stock,
-        images:
-          cv.images?.map((img) => ({
-            id: img.id,
-            url: img.url,
-            isExisting: true,
-          })) || [],
+        images: cv.images.map((img) => ({
+          id: img.id,
+          url: img.url,
+          isExisting: true,
+        })),
         newImages: [],
-        sizeVariants: [], // Add this since ColorVariantData now requires sizeVariants
-      })) || [];
+      })
+    );
 
     setEditColorVariants(editVariants);
     setEditMainImagePreview("");
@@ -277,11 +308,10 @@ export default function ProductsAdmin() {
   const isFormValid = () => {
     return (
       newProduct.name.trim() !== "" &&
+      newProduct.price > 0 &&
       newProduct.categoryId !== "" &&
-      newProduct.description.trim() !== "" &&
       (newProduct.imageUrl || mainImageFile) &&
-      colorVariants.length > 0 &&
-      colorVariants.some((cv) => cv.sizeVariants && cv.sizeVariants.length > 0)
+      colorVariants.length > 0
     );
   };
 
@@ -289,13 +319,10 @@ export default function ProductsAdmin() {
     return (
       editingProduct &&
       editingProduct.name.trim() !== "" &&
+      editingProduct.price > 0 &&
       editingProduct.categoryId !== "" &&
-      editingProduct.description.trim() !== "" &&
       (editingProduct.imageUrl || editMainImageFile) &&
-      editColorVariants.length > 0 &&
-      editColorVariants.some(
-        (cv) => cv.sizeVariants && cv.sizeVariants.length > 0
-      )
+      editColorVariants.length > 0
     );
   };
 
@@ -323,15 +350,14 @@ export default function ProductsAdmin() {
             Product Management
           </h1>
           <p className="text-gray-600 mt-2">
-            Manage your luxury bag collection with color variants and size
-            options
+            Manage your luxury bag collection with color variants
           </p>
         </div>
         <Link
-          href="/admin/reda"
+          href="/admin"
           className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
         >
-          ← Back to Admin Dashboard
+          ← Back to Admin
         </Link>
       </div>
 
@@ -364,28 +390,83 @@ export default function ProductsAdmin() {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Category
-                </label>
-                <select
-                  value={newProduct.categoryId}
-                  onChange={(e) =>
-                    setNewProduct({
-                      ...newProduct,
-                      categoryId: e.target.value,
-                    })
-                  }
-                  className="w-full p-2 border rounded"
-                  required
-                >
-                  <option value="">Select a category</option>
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Price ($)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={newProduct.price}
+                    onChange={(e) =>
+                      setNewProduct({
+                        ...newProduct,
+                        price: parseFloat(e.target.value) || 0,
+                      })
+                    }
+                    className="w-full p-2 border rounded"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Category
+                  </label>
+                  <select
+                    value={newProduct.categoryId}
+                    onChange={(e) =>
+                      setNewProduct({
+                        ...newProduct,
+                        categoryId: e.target.value,
+                      })
+                    }
+                    className="w-full p-2 border rounded"
+                    required
+                  >
+                    <option value="">Select a category</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Size
+                  </label>
+                  <input
+                    type="text"
+                    value={newProduct.size}
+                    onChange={(e) =>
+                      setNewProduct({ ...newProduct, size: e.target.value })
+                    }
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Base Stock
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={newProduct.stock}
+                    onChange={(e) =>
+                      setNewProduct({
+                        ...newProduct,
+                        stock: parseInt(e.target.value) || 0,
+                      })
+                    }
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
               </div>
 
               <div>
@@ -540,7 +621,6 @@ export default function ProductsAdmin() {
             colorVariants={colorVariants}
             onChange={setColorVariants}
             disabled={isSubmitting}
-            basePrice={0}
           />
 
           {/* Submit Button */}
@@ -573,10 +653,13 @@ export default function ProductsAdmin() {
                   Category
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Colors & Sizes
+                  Price
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Total Stock
+                  Colors
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Stock
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
@@ -614,54 +697,26 @@ export default function ProductsAdmin() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {product.category?.name || "No category"}
                   </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    ${product.price}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="space-y-1">
-                      {product.colorVariants &&
-                      product.colorVariants.length > 0 ? (
-                        product.colorVariants.map((cv) => (
-                          <div key={cv.id} className="text-xs">
-                            <span className="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 text-gray-800 font-medium">
-                              {cv.color}
-                            </span>
-                            {cv.sizeVariants && cv.sizeVariants.length > 0 && (
-                              <div className="mt-1 flex flex-wrap gap-1">
-                                {cv.sizeVariants.map((sv) => (
-                                  <span
-                                    key={sv.id}
-                                    className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-blue-50 text-blue-700"
-                                  >
-                                    {sv.size.toUpperCase()} ({sv.stock})
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        ))
-                      ) : (
-                        <span className="text-gray-400 text-xs">
-                          No variants
+                    <div className="flex flex-wrap gap-1">
+                      {product.colorVariants.map((cv) => (
+                        <span
+                          key={cv.id}
+                          className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800"
+                        >
+                          {cv.color} ({cv.images.length} imgs)
                         </span>
-                      )}
+                      ))}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {product.colorVariants?.reduce((total: number, cv) => {
-                      // If color variant has size variants, sum their stock
-                      const sizeVariantsStock =
-                        cv.sizeVariants?.reduce(
-                          (sizeTotal: number, sv) =>
-                            sizeTotal + (sv.stock || 0),
-                          0
-                        ) || 0;
-
-                      // If no size variants, use color variant stock, otherwise use size variants total
-                      return (
-                        total +
-                        (sizeVariantsStock > 0
-                          ? sizeVariantsStock
-                          : cv.stock || 0)
-                      );
-                    }, 0) || 0}
+                    {product.colorVariants.reduce(
+                      (total, cv) => total + cv.stock,
+                      0
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
@@ -725,28 +780,86 @@ export default function ProductsAdmin() {
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Category
-                    </label>
-                    <select
-                      value={editingProduct.categoryId}
-                      onChange={(e) =>
-                        setEditingProduct({
-                          ...editingProduct,
-                          categoryId: e.target.value,
-                        })
-                      }
-                      className="w-full p-2 border rounded"
-                      required
-                    >
-                      <option value="">Select a category</option>
-                      {categories.map((category) => (
-                        <option key={category.id} value={category.id}>
-                          {category.name}
-                        </option>
-                      ))}
-                    </select>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Price ($)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={editingProduct.price}
+                        onChange={(e) =>
+                          setEditingProduct({
+                            ...editingProduct,
+                            price: parseFloat(e.target.value) || 0,
+                          })
+                        }
+                        className="w-full p-2 border rounded"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Category
+                      </label>
+                      <select
+                        value={editingProduct.categoryId}
+                        onChange={(e) =>
+                          setEditingProduct({
+                            ...editingProduct,
+                            categoryId: e.target.value,
+                          })
+                        }
+                        className="w-full p-2 border rounded"
+                        required
+                      >
+                        <option value="">Select a category</option>
+                        {categories.map((category) => (
+                          <option key={category.id} value={category.id}>
+                            {category.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Size
+                      </label>
+                      <input
+                        type="text"
+                        value={editingProduct.size}
+                        onChange={(e) =>
+                          setEditingProduct({
+                            ...editingProduct,
+                            size: e.target.value,
+                          })
+                        }
+                        className="w-full p-2 border rounded"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Base Stock
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={editingProduct.stock}
+                        onChange={(e) =>
+                          setEditingProduct({
+                            ...editingProduct,
+                            stock: parseInt(e.target.value) || 0,
+                          })
+                        }
+                        className="w-full p-2 border rounded"
+                      />
+                    </div>
                   </div>
 
                   <div>
@@ -906,7 +1019,6 @@ export default function ProductsAdmin() {
                 colorVariants={editColorVariants}
                 onChange={setEditColorVariants}
                 disabled={isEditSubmitting}
-                basePrice={0}
               />
             </div>
 

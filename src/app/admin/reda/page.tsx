@@ -1,21 +1,26 @@
+"use client";
+
 import Link from "next/link";
+import { AdminAuthGuard } from "../../components/AdminAuthGuard";
 
 export default function AdminDashboard() {
   return (
-    <div className="py-24">
-      <h1 className="text-3xl font-semibold mb-6">
-        Welcome to the Admin Dashboard
-      </h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <DashboardCard title="Hero Section" link="/admin/reda/hero" />
-        <DashboardCard
-          title="Featured Collections"
-          link="/admin/reda/featured-collections"
-        />
-        <DashboardCard title="Categories" link="/admin/reda/categories" />
-        <DashboardCard title="Products" link="/admin/reda/products" />
+    <AdminAuthGuard>
+      <div className="py-24">
+        <h1 className="text-3xl font-semibold mb-6">
+          Welcome to the Admin Dashboard
+        </h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <DashboardCard title="Hero Section" link="/admin/reda/hero" />
+          <DashboardCard
+            title="Featured Collections"
+            link="/admin/reda/featured-collections"
+          />
+          <DashboardCard title="Categories" link="/admin/reda/categories" />
+          <DashboardCard title="Products" link="/admin/reda/products" />
+        </div>
       </div>
-    </div>
+    </AdminAuthGuard>
   );
 }
 

@@ -2235,9 +2235,16 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Product } from "@/lib/types";
+import type {
+  Product,
+  ColorVariant,
+  SizeVariant,
+  ColorSizeVariant,
+} from "@/lib/types";
 import { useCart } from "@/app/contexts/CartContext";
 import ProductDetailsSkeleton from "./ProductDetailsSkeleton";
+import ProductColorSwitcher from "./ProductColorSwitcher";
+import ProductSizeSelector from "@/app/components/ProductSizeSelector";
 
 // Replace the hideScrollbarStyle with this enhanced version
 const hideScrollbarStyle = `
@@ -2276,14 +2283,77 @@ export default function ProductDetails({ product }: { product: Product }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isWishlist, setIsWishlist] = useState(false);
+  const [selectedColorVariant, setSelectedColorVariant] =
+    useState<ColorVariant | null>(null);
+  const [selectedSizeVariant, setSelectedSizeVariant] = useState<
+    SizeVariant | ColorSizeVariant | null
+  >(null);
 
   const router = useRouter();
   const { addItem } = useCart();
 
-  const allImages = [product.imageUrl, ...product.images.map((img) => img.url)];
+  // Auto-select first color variant on load
+  useEffect(() => {
+    if (
+      product.colorVariants &&
+      product.colorVariants.length > 0 &&
+      !selectedColorVariant
+    ) {
+      setSelectedColorVariant(product.colorVariants[0]);
+    }
+  }, [product.colorVariants, selectedColorVariant]);
 
-  // Check if product is out of stock
-  const isOutOfStock = product.stock <= 0;
+  // Use color switcher for image gallery
+  const colorSwitcher = ProductColorSwitcher({
+    colorVariants: product.colorVariants || [],
+    productName: product.name,
+    mainProductImage: product.imageUrl,
+    onColorChange: (variant) => {
+      setSelectedColorVariant(variant);
+      // Reset size selection when color changes
+      setSelectedSizeVariant(null);
+    },
+    onStockCheck: (stock) => {
+      // Update any stock-related UI here if needed
+    },
+  });
+
+  // Check stock and pricing based on selected variants
+  const calculateAvailableStock = () => {
+    if (selectedSizeVariant) {
+      // If specific size is selected, use its stock
+      return selectedSizeVariant.stock;
+    }
+
+    if (selectedColorVariant) {
+      // If color is selected but no size, check if color has size variants
+      if (
+        selectedColorVariant.sizeVariants &&
+        selectedColorVariant.sizeVariants.length > 0
+      ) {
+        // Sum up stock from all size variants for this color
+        return selectedColorVariant.sizeVariants.reduce(
+          (total, sv) => total + sv.stock,
+          0
+        );
+      } else {
+        // No size variants, use color variant stock directly
+        return selectedColorVariant.stock;
+      }
+    }
+
+    // Fallback to product stock
+    return product.stock || 0;
+  };
+
+  const availableStock = calculateAvailableStock();
+  const isOutOfStock = availableStock <= 0;
+  const selectedColor = selectedColorVariant
+    ? selectedColorVariant.color
+    : product.color || "default";
+  const currentPrice = selectedSizeVariant?.price
+    ? Number(selectedSizeVariant.price)
+    : product.price;
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1000);
@@ -2292,10 +2362,10 @@ export default function ProductDetails({ product }: { product: Product }) {
 
   // Ensure quantity doesn't exceed available stock
   useEffect(() => {
-    if (product.stock > 0 && quantity > product.stock) {
-      setQuantity(product.stock);
+    if (availableStock > 0 && quantity > availableStock) {
+      setQuantity(availableStock);
     }
-  }, [product.stock, quantity]);
+  }, [availableStock, quantity]);
 
   const handleAddToCart = () => {
     // Prevent adding to cart if out of stock
@@ -2304,11 +2374,13 @@ export default function ProductDetails({ product }: { product: Product }) {
     addItem({
       id: product.id,
       name: product.name,
-      price: product.price,
+      price: currentPrice,
       quantity,
       imageUrl: product.imageUrl,
-      color: product.color,
-      size: product.size,
+      color: selectedColor,
+      size: selectedSizeVariant
+        ? selectedSizeVariant.size.toUpperCase()
+        : product.size,
     });
   };
 
@@ -2324,22 +2396,12 @@ export default function ProductDetails({ product }: { product: Product }) {
 
   const increaseQuantity = () => {
     // Don't allow increasing beyond available stock
-    if (quantity < product.stock) {
+    if (quantity < availableStock) {
       setQuantity(quantity + 1);
     }
   };
 
-  const goToPrevImage = () => {
-    setCurrentImageIndex((prev) =>
-      prev === 0 ? allImages.length - 1 : prev - 1
-    );
-  };
-
-  const goToNextImage = () => {
-    setCurrentImageIndex((prev) =>
-      prev === allImages.length - 1 ? 0 : prev + 1
-    );
-  };
+  // Navigation functions removed - now handled by ProductColorSwitcher
 
   if (isLoading) return <ProductDetailsSkeleton />;
 
@@ -2375,84 +2437,8 @@ export default function ProductDetails({ product }: { product: Product }) {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-16">
-          {/* Image gallery */}
-          <div className="space-y-3 md:space-y-6">
-            <div className="aspect-square overflow-hidden rounded-lg md:rounded-xl border border-gray-200 relative group">
-              <Image
-                src={allImages[currentImageIndex] || "/placeholder.svg"}
-                alt={product.name}
-                className="w-full h-full object-cover product-image-zoom"
-                width={800}
-                height={800}
-                priority
-              />
-              <button
-                onClick={goToPrevImage}
-                className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-white/90 p-1.5 md:p-2 rounded-full shadow-md hover:bg-white transition-all opacity-70 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100"
-                aria-label="Previous image"
-              >
-                <ChevronLeft className="h-4 w-4 md:h-5 md:w-5" />
-              </button>
-              <button
-                onClick={goToNextImage}
-                className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-white/90 p-1.5 md:p-2 rounded-full shadow-md hover:bg-white transition-all opacity-70 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100"
-                aria-label="Next image"
-              >
-                <ChevronRight className="h-4 w-4 md:h-5 md:w-5" />
-              </button>
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
-                {allImages.map((_, index) => (
-                  <button
-                    key={`indicator-${index}`}
-                    onClick={() => setCurrentImageIndex(index)}
-                    className={`w-2 h-2 rounded-full ${
-                      currentImageIndex === index ? "bg-black" : "bg-gray-300"
-                    }`}
-                    aria-label={`Go to image ${index + 1}`}
-                  />
-                ))}
-              </div>
-
-              {/* Out of stock overlay */}
-              {isOutOfStock && (
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                  <div className="bg-white px-6 py-3 rounded-md text-red-600 font-bold flex items-center">
-                    <AlertCircle className="mr-2 h-5 w-5" />
-                    RUPTURE DE STOCK
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="relative px-2 md:px-4">
-              <div className="overflow-x-auto pb-2 hide-scrollbar">
-                <div className="flex gap-2 md:gap-3 min-w-max justify-center">
-                  {allImages.map((image, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className="focus:outline-none"
-                    >
-                      <div
-                        className={`aspect-square w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 overflow-hidden rounded-lg border transition-all ${
-                          currentImageIndex === index
-                            ? "thumbnail-active"
-                            : "border-gray-200 hover:border-gray-400"
-                        }`}
-                      >
-                        <Image
-                          src={image || "/placeholder.svg"}
-                          alt={`${product.name} view ${index + 1}`}
-                          width={100}
-                          height={100}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Image gallery with color switching */}
+          {colorSwitcher.imageGallery}
 
           {/* Product Info */}
           <div className="flex flex-col justify-start md:justify-center pt-2 md:pt-0">
@@ -2463,16 +2449,21 @@ export default function ProductDetails({ product }: { product: Product }) {
                 </h1>
                 <div className="flex flex-wrap items-center gap-2 md:gap-4 mb-3 md:mb-4">
                   <p className="text-xl sm:text-2xl md:text-3xl font-semibold">
-                    {product.price.toLocaleString()} MAD
+                    {currentPrice.toLocaleString()} MAD
+                    {currentPrice !== product.price && (
+                      <span className="text-sm text-gray-500 ml-2">
+                        (Base: {product.price.toLocaleString()} MAD)
+                      </span>
+                    )}
                   </p>
-                  {product.originalPrice > product.price && (
+                  {product.originalPrice > currentPrice && (
                     <>
                       <p className="line-through text-muted-foreground">
                         {product.originalPrice.toLocaleString()} MAD
                       </p>
                       <div className="bg-red-50 text-red-600 text-sm px-3 py-1 rounded-full font-medium">
                         {Math.round(
-                          ((product.originalPrice - product.price) /
+                          ((product.originalPrice - currentPrice) /
                             product.originalPrice) *
                             100
                         )}
@@ -2491,8 +2482,8 @@ export default function ProductDetails({ product }: { product: Product }) {
                     </span>
                   ) : (
                     <span className="text-green-600 font-medium">
-                      En stock ({product.stock} disponible
-                      {product.stock > 1 ? "s" : ""})
+                      En stock ({availableStock} disponible
+                      {availableStock > 1 ? "s" : ""})
                     </span>
                   )}
                 </div>
@@ -2501,27 +2492,41 @@ export default function ProductDetails({ product }: { product: Product }) {
               </div>
 
               <div className="grid gap-4 md:gap-6">
-                <div>
-                  <h3 className="font-medium mb-2 md:mb-3 text-xs sm:text-sm uppercase tracking-wider">
-                    Color
-                  </h3>
-                  <div className="flex items-center gap-3">
-		  {/* <div
-                      className="w-8 h-8 rounded-full border shadow-sm ring-2 ring-offset-2 ring-black"
-                      style={{ backgroundColor: product.color }}
-                    />*/}
-                    <span className="text-sm capitalize">{product.color}</span>
-                  </div>
-                </div>
+                {/* Color selector */}
+                {colorSwitcher.colorSelector}
 
-                <div>
-                  <h3 className="font-medium mb-2 md:mb-3 text-xs sm:text-sm uppercase tracking-wider">
-                    Size
-                  </h3>
-                  <div className="inline-block px-3 py-1.5 sm:px-4 sm:py-2 border border-black text-sm rounded-md font-medium">
-                    {product.size}
-                  </div>
-                </div>
+                {/* Size selector */}
+                {(selectedColorVariant?.sizeVariants &&
+                  selectedColorVariant.sizeVariants.length > 0) ||
+                (product.sizeVariants && product.sizeVariants.length > 0) ? (
+                  <ProductSizeSelector
+                    sizeVariants={
+                      selectedColorVariant?.sizeVariants ||
+                      product.sizeVariants ||
+                      []
+                    }
+                    basePrice={product.price}
+                    onSizeChange={(variant) => {
+                      setSelectedSizeVariant(variant);
+                    }}
+                    onStockCheck={(stock) => {
+                      // Stock info is handled in the size selector component
+                    }}
+                    disabled={false} // Don't disable based on color stock, let individual size stock control this
+                  />
+                ) : (
+                  selectedColorVariant && (
+                    <div>
+                      <h3 className="font-medium mb-2 md:mb-3 text-xs sm:text-sm uppercase tracking-wider">
+                        Size
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        No size variants available for{" "}
+                        {selectedColorVariant.color}
+                      </p>
+                    </div>
+                  )
+                )}
 
                 <div>
                   <h3 className="font-medium mb-2 md:mb-3 text-xs sm:text-sm uppercase tracking-wider">
@@ -2540,7 +2545,7 @@ export default function ProductDetails({ product }: { product: Product }) {
                     </span>
                     <button
                       onClick={increaseQuantity}
-                      disabled={quantity >= product.stock || isOutOfStock}
+                      disabled={quantity >= availableStock || isOutOfStock}
                       className="w-9 h-9 sm:w-10 sm:h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -2657,8 +2662,8 @@ export default function ProductDetails({ product }: { product: Product }) {
                         >
                           {isOutOfStock
                             ? "Rupture de stock"
-                            : `${product.stock} disponible${
-                                product.stock > 1 ? "s" : ""
+                            : `${availableStock} disponible${
+                                availableStock > 1 ? "s" : ""
                               }`}
                         </span>
                       </span>

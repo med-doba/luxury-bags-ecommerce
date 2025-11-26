@@ -473,7 +473,17 @@ export default async function handler(
   if (req.method === "GET") {
     try {
       const products = await prisma.product.findMany({
-        include: { category: true, images: true },
+        include: {
+          category: true,
+          images: true,
+          colorVariants: {
+            include: {
+              images: true,
+              sizeVariants: true,
+            },
+          },
+          sizeVariants: true,
+        },
       });
       res.status(200).json(products);
     } catch (error) {
@@ -500,13 +510,13 @@ export default async function handler(
         const name = (fields.name?.[0] as string) || "";
         const price = Number.parseFloat((fields.price?.[0] as string) || "0");
         const categoryId = (fields.categoryId?.[0] as string) || "";
-        const color = (fields.color?.[0] as string) || "";
-        const size = (fields.size?.[0] as string) || "";
+        const color = (fields.color?.[0] as string) || ""; // Legacy field
+        const size = (fields.size?.[0] as string) || ""; // Legacy field
         const description = (fields.description?.[0] as string) || "";
         const featured = fields.featured?.[0] === "true";
 
-        // Add this line to extract the stock field
-        const stock = Number.parseInt((fields.stock?.[0] as string) || "5");
+        // Legacy field - optional since we use size variants now
+        const stock = Number.parseInt((fields.stock?.[0] as string) || "0");
 
         // Handle main image (either from file upload or URL)
         let imageUrl = (fields.imageUrl?.[0] as string) || "";
@@ -544,14 +554,80 @@ export default async function handler(
             price,
             imageUrl,
             category: { connect: { id: categoryId } },
-            color,
-            size,
+            color: color || "", // Legacy field, can be empty
+            size: size || "", // Legacy field, can be empty
             description,
             featured,
-            stock, // Add this line to include the stock field
+            stock: stock || 0, // Legacy field, default to 0
           },
           include: { category: true },
         });
+
+        // Handle color variants with size variants
+        const colorVariantsData = fields.colorVariants?.[0]
+          ? JSON.parse(fields.colorVariants[0] as string)
+          : [];
+
+        for (const variantData of colorVariantsData) {
+          // Create color variant
+          const colorVariant = await prisma.colorVariant.create({
+            data: {
+              color: variantData.color,
+              stock: variantData.stock || 0,
+              productId: newProduct.id,
+            },
+          });
+
+          // Create size variants for this color
+          if (variantData.sizeVariants && variantData.sizeVariants.length > 0) {
+            for (const sizeData of variantData.sizeVariants) {
+              await prisma.colorSizeVariant.create({
+                data: {
+                  size: sizeData.size,
+                  stock: sizeData.stock || 0,
+                  price: sizeData.price ? Number(sizeData.price) : null,
+                  colorVariantId: colorVariant.id,
+                },
+              });
+            }
+          }
+
+          // Handle images for this color variant
+          const colorFileKey = `colorImages_${variantData.color}`;
+          const colorImages = files[colorFileKey];
+
+          if (colorImages) {
+            const imageFiles = Array.isArray(colorImages)
+              ? colorImages
+              : [colorImages];
+
+            for (const imageFile of imageFiles) {
+              if (imageFile && imageFile.filepath) {
+                const imageName = `color-${variantData.color}-${Date.now()}-${
+                  imageFile.originalFilename || "image.jpg"
+                }`;
+                const imagePath = path.join(uploadsDir, imageName);
+
+                try {
+                  const fileContent = await readFile(imageFile.filepath);
+                  await writeFile(imagePath, fileContent);
+
+                  await prisma.colorVariantImage.create({
+                    data: {
+                      url: `/uploads/${imageName}`,
+                      colorVariantId: colorVariant.id,
+                    },
+                  });
+                } catch (error) {
+                  console.error(
+                    `Error processing image for color ${variantData.color}:`,
+                    error
+                  );
+                }
+              }
+            }
+          }
+        }
 
         // Handle additional images
         if (files.additionalImages) {
