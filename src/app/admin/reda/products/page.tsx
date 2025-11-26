@@ -499,7 +499,8 @@ export default function ProductsAdmin() {
                   <option value="shoes">Shoes</option>
                 </select>
                 <p className="text-xs text-gray-500 mt-1">
-                  This determines the available size options (bag sizes vs shoe sizes)
+                  This determines the available size options (bag sizes vs shoe
+                  sizes)
                 </p>
               </div>
 
@@ -980,7 +981,8 @@ export default function ProductsAdmin() {
                       <option value="shoes">Shoes</option>
                     </select>
                     <p className="text-xs text-gray-500 mt-1">
-                      This determines the available size options (bag sizes vs shoe sizes)
+                      This determines the available size options (bag sizes vs
+                      shoe sizes)
                     </p>
                   </div>
 
