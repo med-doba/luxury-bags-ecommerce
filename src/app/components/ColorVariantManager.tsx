@@ -4,21 +4,7 @@ import React, { useState, useRef } from "react";
 import Image from "next/image";
 import { X, Upload, Plus, Minus } from "lucide-react";
 
-// Predefined color options
-const COLOR_OPTIONS = [
-  { name: "Black", value: "black", hex: "#000000" },
-  { name: "White", value: "white", hex: "#FFFFFF" },
-  { name: "Brown", value: "brown", hex: "#8B4513" },
-  { name: "Tan", value: "tan", hex: "#D2B48C" },
-  { name: "Beige", value: "beige", hex: "#F5F5DC" },
-  { name: "Navy", value: "navy", hex: "#000080" },
-  { name: "Red", value: "red", hex: "#DC143C" },
-  { name: "Pink", value: "pink", hex: "#FFC0CB" },
-  { name: "Green", value: "green", hex: "#228B22" },
-  { name: "Gray", value: "gray", hex: "#808080" },
-  { name: "Camel", value: "camel", hex: "#C19A6B" },
-  { name: "Burgundy", value: "burgundy", hex: "#800020" },
-];
+// Removed predefined colors - now using custom color picker only
 
 // Size options for each color
 const SIZE_OPTIONS = [
@@ -38,6 +24,7 @@ export interface ColorSizeVariantData {
 export interface ColorVariantData {
   id?: string;
   color: string;
+  colorHex?: string; // Add hex color support
   stock: number;
   images: ColorVariantImageData[];
   newImages: File[];
@@ -67,13 +54,19 @@ export default function ColorVariantManager({
     colorVariants.map((cv) => cv.color)
   );
 
+  // Custom color creation state
+  const [showCustomColorForm, setShowCustomColorForm] = useState(false);
+  const [customColorName, setCustomColorName] = useState("");
+  const [customColorHex, setCustomColorHex] = useState("#000000");
+
   const fileInputRefs = useRef<{ [color: string]: HTMLInputElement | null }>(
     {}
   );
 
-  const addColorVariant = (color: string) => {
+  const addColorVariant = (color: string, colorHex: string) => {
     const newVariant: ColorVariantData = {
       color,
+      colorHex,
       stock: 0,
       images: [],
       newImages: [],
@@ -83,6 +76,23 @@ export default function ColorVariantManager({
     const updatedVariants = [...colorVariants, newVariant];
     setSelectedColors([...selectedColors, color]);
     onChange(updatedVariants);
+  };
+
+  const addCustomColorVariant = () => {
+    if (!customColorName.trim()) return;
+
+    // Check if color already exists
+    if (selectedColors.includes(customColorName.toLowerCase())) {
+      alert("A color with this name already exists!");
+      return;
+    }
+
+    addColorVariant(customColorName.toLowerCase(), customColorHex);
+
+    // Reset form
+    setCustomColorName("");
+    setCustomColorHex("#000000");
+    setShowCustomColorForm(false);
   };
 
   const removeColorVariant = (color: string) => {
@@ -135,13 +145,14 @@ export default function ColorVariantManager({
   };
 
   const getColorHex = (colorName: string) => {
-    const color = COLOR_OPTIONS.find((c) => c.value === colorName);
-    return color?.hex || "#000000";
+    // Get hex from the color variant
+    const colorVariant = colorVariants.find((cv) => cv.color === colorName);
+    return colorVariant?.colorHex || "#000000";
   };
 
   const getColorDisplayName = (colorName: string) => {
-    const color = COLOR_OPTIONS.find((c) => c.value === colorName);
-    return color?.name || colorName;
+    // Capitalize the color name
+    return colorName.charAt(0).toUpperCase() + colorName.slice(1);
   };
 
   // Size variant management functions
@@ -200,57 +211,119 @@ export default function ColorVariantManager({
       {/* Color Selection */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-3">
-          Available Colors
+          Color Variants
         </label>
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-          {COLOR_OPTIONS.map((color) => {
-            const isSelected = selectedColors.includes(color.value);
 
-            return (
+        {/* Color Section */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-sm font-medium text-gray-600">Colors</h4>
+            {!showCustomColorForm && (
               <button
-                key={color.value}
                 type="button"
-                onClick={() => {
-                  if (isSelected) {
-                    removeColorVariant(color.value);
-                  } else {
-                    addColorVariant(color.value);
-                  }
-                }}
+                onClick={() => setShowCustomColorForm(true)}
                 disabled={disabled}
-                className={`
-                  relative flex flex-col items-center p-3 rounded-lg border-2 transition-all
-                  ${
-                    isSelected
-                      ? "border-blue-500 bg-blue-50"
-                      : "border-gray-200 hover:border-gray-300"
-                  }
-                  ${
-                    disabled
-                      ? "opacity-50 cursor-not-allowed"
-                      : "cursor-pointer"
-                  }
-                `}
+                className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
               >
-                <div
-                  className={`w-8 h-8 rounded-full border-2 mb-2 ${
-                    color.value === "white"
-                      ? "border-gray-300"
-                      : "border-gray-200"
-                  }`}
-                  style={{ backgroundColor: color.hex }}
-                />
-                <span className="text-xs font-medium text-gray-700">
-                  {color.name}
-                </span>
-                {isSelected && (
-                  <div className="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
-                    <Plus className="w-3 h-3" />
-                  </div>
-                )}
+                Add Color
               </button>
-            );
-          })}
+            )}
+          </div>
+
+          {/* Color Form */}
+          {showCustomColorForm && (
+            <div className="bg-gray-50 p-4 rounded-lg border">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
+                    Color Name
+                  </label>
+                  <input
+                    type="text"
+                    value={customColorName}
+                    onChange={(e) => setCustomColorName(e.target.value)}
+                    placeholder="e.g., Rose Gold, Midnight Blue"
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                    disabled={disabled}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
+                    Color
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="color"
+                      value={customColorHex}
+                      onChange={(e) => setCustomColorHex(e.target.value)}
+                      className="w-12 h-9 border border-gray-300 rounded cursor-pointer"
+                      disabled={disabled}
+                    />
+                    <input
+                      type="text"
+                      value={customColorHex}
+                      onChange={(e) => setCustomColorHex(e.target.value)}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm font-mono"
+                      placeholder="#000000"
+                      disabled={disabled}
+                    />
+                  </div>
+                </div>
+                <div className="flex space-x-2">
+                  <button
+                    type="button"
+                    onClick={addCustomColorVariant}
+                    disabled={disabled || !customColorName.trim()}
+                    className="px-4 py-2 bg-green-600 text-white text-sm rounded hover:bg-green-700 disabled:opacity-50"
+                  >
+                    Add
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowCustomColorForm(false);
+                      setCustomColorName("");
+                      setCustomColorHex("#000000");
+                    }}
+                    disabled={disabled}
+                    className="px-4 py-2 bg-gray-600 text-white text-sm rounded hover:bg-gray-700 disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Display Colors */}
+          {colorVariants.length > 0 && (
+            <div className="mt-4">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+                {colorVariants.map((variant) => (
+                  <div
+                    key={variant.color}
+                    className="relative flex flex-col items-center p-3 rounded-lg border-2 border-blue-500 bg-blue-50"
+                  >
+                    <div
+                      className="w-8 h-8 rounded-full border-2 border-gray-200 mb-2"
+                      style={{ backgroundColor: variant.colorHex || "#000000" }}
+                    />
+                    <span className="text-xs font-medium text-gray-700 text-center">
+                      {getColorDisplayName(variant.color)}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => removeColorVariant(variant.color)}
+                      disabled={disabled}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center hover:bg-red-600 disabled:opacity-50"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -270,11 +343,7 @@ export default function ColorVariantManager({
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div
-                    className={`w-6 h-6 rounded-full border-2 ${
-                      variant.color === "white"
-                        ? "border-gray-300"
-                        : "border-gray-200"
-                    }`}
+                    className="w-6 h-6 rounded-full border-2 border-gray-200"
                     style={{ backgroundColor: getColorHex(variant.color) }}
                   />
                   <h4 className="text-md font-medium text-gray-900">

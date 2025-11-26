@@ -7,7 +7,19 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     try {
-      const products = await prisma.product.findMany();
+      const products = await prisma.product.findMany({
+        include: {
+          category: true,
+          images: true,
+          colorVariants: {
+            include: {
+              images: true,
+              sizeVariants: true,
+            },
+          },
+          sizeVariants: true,
+        },
+      } as any);
       res.status(200).json(products);
     } catch (error) {
       res.status(500).json({ error: `Error fetching products ${error}` });

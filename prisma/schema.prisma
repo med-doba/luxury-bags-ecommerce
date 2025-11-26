@@ -26,28 +26,31 @@ model Category {
 }
 
 model Product {
-  id            String         @id @default(uuid())
-  name          String
-  price         Decimal        @db.Decimal(10,2)  // ✅ MySQL decimal fix
-  imageUrl      String         // Main product image
-  category      Category?      @relation(fields: [categoryId], references: [id])
-  categoryId    String?
-  size          String?        // Made optional since we use size variants now
-  description   String         @db.LongText  // ✅ Fix for MySQL Text
-  featured      Boolean        @default(false)
-  stock         Int            @default(5)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  colorVariants ColorVariant[]
-  sizeVariants  SizeVariant[]  // Keeping for backward compatibility
+  id              String         @id @default(uuid())
+  name            String
+  price           Decimal        @db.Decimal(10,2)  // ✅ MySQL decimal fix
+  onSale          Boolean        @default(false)    // Whether product is on sale
+  salePercentage  Int?           // Sale percentage (1-99)
+  imageUrl        String         // Main product image
+  category        Category?      @relation(fields: [categoryId], references: [id])
+  categoryId      String?
+  size            String?        // Made optional since we use size variants now
+  description     String         @db.LongText  // ✅ Fix for MySQL Text
+  featured        Boolean        @default(false)
+  stock           Int            @default(5)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  colorVariants   ColorVariant[]
+  sizeVariants    SizeVariant[]  // Keeping for backward compatibility
   // Legacy fields - keeping for backward compatibility during migration
-  color         String?        // Will be deprecated - made optional
-  images        ProductImage[] // Will be deprecated
+  color           String?        // Will be deprecated - made optional
+  images          ProductImage[] // Will be deprecated
 }
 
 model ColorVariant {
   id           String                @id @default(uuid())
   color        String
+  colorHex     String?               // Optional hex color code for custom colors
   stock        Int                   @default(0)
   productId    String
   product      Product               @relation(fields: [productId], references: [id], onDelete: Cascade)

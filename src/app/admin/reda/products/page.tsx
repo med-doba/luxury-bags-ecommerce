@@ -22,10 +22,13 @@ interface Product {
   size?: string; // Legacy field, optional
   description: string;
   featured: boolean;
+  onSale?: boolean;
+  salePercentage?: number;
   stock?: number; // Legacy field, optional
   colorVariants?: {
     id: string;
     color: string;
+    colorHex?: string;
     stock: number;
     images?: {
       id: string;
@@ -62,6 +65,8 @@ export default function ProductsAdmin() {
     categoryId: "",
     description: "",
     featured: false,
+    onSale: false,
+    salePercentage: "",
   });
   const [colorVariants, setColorVariants] = useState<ColorVariantData[]>([]);
   const [imageUploadMethod, setImageUploadMethod] =
@@ -148,8 +153,19 @@ export default function ProductsAdmin() {
 
       // Add basic product fields
       Object.entries(newProduct).forEach(([key, value]) => {
-        formData.append(key, value.toString());
+        if (key === 'onSale') {
+          formData.append(key, value.toString());
+        } else if (key === 'salePercentage') {
+          if (newProduct.onSale && value) {
+            formData.append(key, Number(value).toString());
+          }
+        } else {
+          formData.append(key, value.toString());
+        }
       });
+      
+      // Always set price to 0 since we use variants for pricing
+      formData.append('price', '0');
 
       // Add main image if a file was selected
       if (mainImageFile) {
@@ -195,6 +211,8 @@ export default function ProductsAdmin() {
       categoryId: "",
       description: "",
       featured: false,
+      onSale: false,
+      salePercentage: "",
     });
     setColorVariants([]);
     setMainImageFile(null);
@@ -209,6 +227,8 @@ export default function ProductsAdmin() {
     setEditingProduct({
       ...product,
       categoryId: product.category?.id || "",
+      onSale: product.onSale || false,
+      salePercentage: product.salePercentage || 0,
     });
 
     // Convert product color variants to ColorVariantData format
@@ -216,6 +236,7 @@ export default function ProductsAdmin() {
       product.colorVariants?.map((cv) => ({
         id: cv.id,
         color: cv.color,
+        colorHex: cv.colorHex || undefined,
         stock: cv.stock,
         images:
           cv.images?.map((img) => ({
@@ -224,7 +245,12 @@ export default function ProductsAdmin() {
             isExisting: true,
           })) || [],
         newImages: [],
-        sizeVariants: [], // Add this since ColorVariantData now requires sizeVariants
+        sizeVariants: cv.sizeVariants?.map((sv) => ({
+          id: sv.id,
+          size: sv.size,
+          stock: sv.stock,
+          price: sv.price || undefined,
+        })) || [],
       })) || [];
 
     setEditColorVariants(editVariants);
@@ -312,6 +338,63 @@ export default function ProductsAdmin() {
       } catch (error) {
         console.error("Error deleting product:", error);
       }
+    }
+  };
+
+  const handleUpdateProduct = async () => {
+    if (!editingProduct) return;
+
+    setIsEditSubmitting(true);
+
+    try {
+      const formData = new FormData();
+
+      // Add basic product fields
+      formData.append("name", editingProduct.name);
+      formData.append("description", editingProduct.description);
+      formData.append("categoryId", editingProduct.categoryId || "");
+      formData.append("featured", editingProduct.featured.toString());
+      formData.append("onSale", (editingProduct.onSale || false).toString());
+      
+      // Add sale percentage only if product is on sale
+      if (editingProduct.onSale && editingProduct.salePercentage) {
+        formData.append("salePercentage", editingProduct.salePercentage.toString());
+      }
+
+      // Add main image if a new file was selected
+      if (editMainImageFile) {
+        formData.append("mainImage", editMainImageFile);
+      } else if (editingProduct.imageUrl) {
+        formData.append("imageUrl", editingProduct.imageUrl);
+      }
+
+      // Add color variants data
+      formData.append("colorVariants", JSON.stringify(editColorVariants));
+
+      // Add color variant images
+      editColorVariants.forEach((variant) => {
+        variant.newImages.forEach((file) => {
+          formData.append(`colorImages_${variant.color}`, file);
+        });
+      });
+
+      const response = await fetch(`/api/admin/products/${editingProduct.id}`, {
+        method: "PUT",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to update product");
+      }
+
+      cancelEditing();
+      fetchProducts();
+    } catch (error) {
+      console.error("Error updating product:", error);
+      // You might want to show this error to the user
+    } finally {
+      setIsEditSubmitting(false);
     }
   };
 
@@ -418,6 +501,78 @@ export default function ProductsAdmin() {
                   Featured
                 </span>
               </label>
+
+              {/* Sale Section */}
+              <div className="border-t pt-4 space-y-4">
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={newProduct.onSale}
+                    onChange={(e) =>
+                      setNewProduct({ ...newProduct, onSale: e.target.checked })
+                    }
+                    className="rounded border-gray-300"
+                  />
+                  <span className="text-sm font-medium text-gray-700">
+                    Put on Sale
+                  </span>
+                </label>
+
+                {newProduct.onSale && (
+                  <div className="space-y-3 bg-gray-50 p-4 rounded-lg">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Sale Percentage (%)
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="99"
+                        value={newProduct.salePercentage}
+                        onChange={(e) =>
+                          setNewProduct({
+                            ...newProduct,
+                            salePercentage: e.target.value,
+                          })
+                        }
+                        className="w-full p-2 border rounded"
+                        placeholder="Enter discount percentage (e.g., 25 for 25% off)"
+                        required={newProduct.onSale}
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Enter a value between 1-99 (e.g., 25 for 25% off)
+                      </p>
+                    </div>
+
+                    {newProduct.salePercentage && 
+                     Number(newProduct.salePercentage) > 0 && 
+                     Number(newProduct.salePercentage) < 100 && (
+                      <div className="bg-blue-100 p-3 rounded">
+                        <p className="text-sm font-medium text-blue-800 mb-2">
+                          Sale Preview - {newProduct.salePercentage}% OFF:
+                        </p>
+                        <div className="space-y-1 text-sm">
+                          <p className="text-blue-700">
+                            This discount will be applied to all variant prices in this product.
+                          </p>
+                          <div className="grid grid-cols-2 gap-4 mt-2 text-xs">
+                            <div className="bg-white p-2 rounded">
+                              <p className="font-semibold">Example:</p>
+                              <p>Original: 100.00 MAD</p>
+                              <p className="text-green-600">Sale: {(100 * (1 - Number(newProduct.salePercentage) / 100)).toFixed(2)} MAD</p>
+                            </div>
+                            <div className="bg-white p-2 rounded">
+                              <p className="font-semibold">Another example:</p>
+                              <p>Original: 250.00 MAD</p>
+                              <p className="text-green-600">Sale: {(250 * (1 - Number(newProduct.salePercentage) / 100)).toFixed(2)} MAD</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Main Image Section */}
@@ -601,10 +756,15 @@ export default function ProductsAdmin() {
                         <div className="text-sm font-medium text-gray-900">
                           {product.name}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-gray-500 flex flex-wrap gap-1">
                           {product.featured && (
                             <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
                               Featured
+                            </span>
+                          )}
+                          {product.onSale && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                              Sale {product.salePercentage}% OFF
                             </span>
                           )}
                         </div>
@@ -782,6 +942,81 @@ export default function ProductsAdmin() {
                       Featured
                     </span>
                   </label>
+
+                  {/* Sale Section for Edit */}
+                  <div className="border-t pt-4 space-y-4">
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={editingProduct.onSale || false}
+                        onChange={(e) =>
+                          setEditingProduct({
+                            ...editingProduct,
+                            onSale: e.target.checked,
+                          })
+                        }
+                        className="rounded border-gray-300"
+                      />
+                      <span className="text-sm font-medium text-gray-700">
+                        Put on Sale
+                      </span>
+                    </label>
+
+                    {editingProduct.onSale && (
+                      <div className="space-y-3 bg-gray-50 p-4 rounded-lg">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Sale Percentage (%)
+                          </label>
+                          <input
+                            type="number"
+                            min="1"
+                            max="99"
+                            value={editingProduct.salePercentage || ""}
+                            onChange={(e) =>
+                              setEditingProduct({
+                                ...editingProduct,
+                                salePercentage: Number(e.target.value),
+                              })
+                            }
+                            className="w-full p-2 border rounded"
+                            placeholder="Enter discount percentage (e.g., 25 for 25% off)"
+                            required={editingProduct.onSale}
+                          />
+                          <p className="text-xs text-gray-500 mt-1">
+                            Enter a value between 1-99 (e.g., 25 for 25% off)
+                          </p>
+                        </div>
+
+                        {editingProduct.salePercentage && 
+                         editingProduct.salePercentage > 0 && 
+                         editingProduct.salePercentage < 100 && (
+                          <div className="bg-blue-100 p-3 rounded">
+                            <p className="text-sm font-medium text-blue-800 mb-2">
+                              Sale Preview - {editingProduct.salePercentage}% OFF:
+                            </p>
+                            <div className="space-y-1 text-sm">
+                              <p className="text-blue-700">
+                                This discount will be applied to all variant prices in this product.
+                              </p>
+                              <div className="grid grid-cols-2 gap-4 mt-2 text-xs">
+                                <div className="bg-white p-2 rounded">
+                                  <p className="font-semibold">Example:</p>
+                                  <p>Original: 100.00 MAD</p>
+                                  <p className="text-green-600">Sale: {(100 * (1 - editingProduct.salePercentage / 100)).toFixed(2)} MAD</p>
+                                </div>
+                                <div className="bg-white p-2 rounded">
+                                  <p className="font-semibold">Another example:</p>
+                                  <p>Original: 250.00 MAD</p>
+                                  <p className="text-green-600">Sale: {(250 * (1 - editingProduct.salePercentage / 100)).toFixed(2)} MAD</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Main Image Section */}
@@ -920,7 +1155,7 @@ export default function ProductsAdmin() {
               </button>
               <button
                 type="button"
-                // onClick={handleUpdateProduct}
+                onClick={handleUpdateProduct}
                 disabled={isEditSubmitting || !isEditFormValid()}
                 className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
               >

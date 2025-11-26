@@ -2245,6 +2245,7 @@ import { useCart } from "@/app/contexts/CartContext";
 import ProductDetailsSkeleton from "./ProductDetailsSkeleton";
 import ProductColorSwitcher from "./ProductColorSwitcher";
 import ProductSizeSelector from "@/app/components/ProductSizeSelector";
+import { getSaleInfo } from "@/lib/priceUtils";
 
 // Replace the hideScrollbarStyle with this enhanced version
 const hideScrollbarStyle = `
@@ -2355,6 +2356,21 @@ export default function ProductDetails({ product }: { product: Product }) {
     ? Number(selectedSizeVariant.price)
     : product.price;
 
+  // Calculate dynamic sale info based on current selected price
+  const getDynamicSaleInfo = () => {
+    const isOnSale = product.onSale && product.salePercentage && product.salePercentage > 0 && product.salePercentage < 100;
+    const originalPrice = isOnSale ? currentPrice : null;
+    const salePrice = isOnSale ? currentPrice * (1 - product.salePercentage! / 100) : currentPrice;
+    const percentage = isOnSale ? product.salePercentage! : 0;
+
+    return {
+      isOnSale: !!isOnSale,
+      originalPrice,
+      salePrice,
+      percentage,
+    };
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1000);
     return () => clearTimeout(timer);
@@ -2374,7 +2390,7 @@ export default function ProductDetails({ product }: { product: Product }) {
     addItem({
       id: product.id,
       name: product.name,
-      price: currentPrice,
+      price: getDynamicSaleInfo().salePrice,
       quantity,
       imageUrl: product.imageUrl,
       color: selectedColor,
@@ -2449,25 +2465,15 @@ export default function ProductDetails({ product }: { product: Product }) {
                 </h1>
                 <div className="flex flex-wrap items-center gap-2 md:gap-4 mb-3 md:mb-4">
                   <p className="text-xl sm:text-2xl md:text-3xl font-semibold">
-                    {currentPrice.toLocaleString()} MAD
-                    {currentPrice !== product.price && (
-                      <span className="text-sm text-gray-500 ml-2">
-                        (Base: {product.price.toLocaleString()} MAD)
-                      </span>
-                    )}
+                    {getDynamicSaleInfo().salePrice.toLocaleString()} MAD
                   </p>
-                  {product.originalPrice > currentPrice && (
+                  {getDynamicSaleInfo().isOnSale && getDynamicSaleInfo().originalPrice && (
                     <>
                       <p className="line-through text-muted-foreground">
-                        {product.originalPrice.toLocaleString()} MAD
+                        {getDynamicSaleInfo().originalPrice!.toLocaleString()} MAD
                       </p>
                       <div className="bg-red-50 text-red-600 text-sm px-3 py-1 rounded-full font-medium">
-                        {Math.round(
-                          ((product.originalPrice - currentPrice) /
-                            product.originalPrice) *
-                            100
-                        )}
-                        % OFF
+                        -{getDynamicSaleInfo().percentage}% OFF
                       </div>
                     </>
                   )}
@@ -2513,6 +2519,8 @@ export default function ProductDetails({ product }: { product: Product }) {
                       // Stock info is handled in the size selector component
                     }}
                     disabled={false} // Don't disable based on color stock, let individual size stock control this
+                    isOnSale={product.onSale}
+                    salePercentage={product.salePercentage || 0}
                   />
                 ) : (
                   selectedColorVariant && (

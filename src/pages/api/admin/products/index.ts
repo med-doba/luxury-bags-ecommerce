@@ -484,7 +484,7 @@ export default async function handler(
           },
           sizeVariants: true,
         },
-      });
+      } as any);
       res.status(200).json(products);
     } catch (error) {
       res.status(500).json({ error: `Error fetching products ${error}` });
@@ -514,6 +514,10 @@ export default async function handler(
         const size = (fields.size?.[0] as string) || ""; // Legacy field
         const description = (fields.description?.[0] as string) || "";
         const featured = fields.featured?.[0] === "true";
+        
+        // Sale fields
+        const onSale = fields.onSale?.[0] === "true";
+        const salePercentage = onSale ? Number.parseInt((fields.salePercentage?.[0] as string) || "0") : null;
 
         // Legacy field - optional since we use size variants now
         const stock = Number.parseInt((fields.stock?.[0] as string) || "0");
@@ -548,10 +552,12 @@ export default async function handler(
         }
 
         // Create the product
-        const newProduct = await prisma.product.create({
+        const newProduct = await (prisma.product as any).create({
           data: {
             name,
             price,
+            salePercentage,
+            onSale,
             imageUrl,
             category: { connect: { id: categoryId } },
             color: color || "", // Legacy field, can be empty
@@ -570,9 +576,10 @@ export default async function handler(
 
         for (const variantData of colorVariantsData) {
           // Create color variant
-          const colorVariant = await prisma.colorVariant.create({
+          const colorVariant = await (prisma as any).colorVariant.create({
             data: {
               color: variantData.color,
+              colorHex: variantData.colorHex || null,
               stock: variantData.stock || 0,
               productId: newProduct.id,
             },
@@ -581,7 +588,7 @@ export default async function handler(
           // Create size variants for this color
           if (variantData.sizeVariants && variantData.sizeVariants.length > 0) {
             for (const sizeData of variantData.sizeVariants) {
-              await prisma.colorSizeVariant.create({
+              await (prisma as any).colorSizeVariant.create({
                 data: {
                   size: sizeData.size,
                   stock: sizeData.stock || 0,
@@ -612,7 +619,7 @@ export default async function handler(
                   const fileContent = await readFile(imageFile.filepath);
                   await writeFile(imagePath, fileContent);
 
-                  await prisma.colorVariantImage.create({
+                  await (prisma as any).colorVariantImage.create({
                     data: {
                       url: `/uploads/${imageName}`,
                       colorVariantId: colorVariant.id,

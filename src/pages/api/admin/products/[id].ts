@@ -77,7 +77,32 @@ export default async function handler(
 
   if (req.method === "DELETE") {
     try {
-      // First, delete all related product images
+      // Delete all related color variant images first
+      await (prisma as any).colorVariantImage.deleteMany({
+        where: {
+          colorVariant: {
+            productId: String(id),
+          },
+        },
+      });
+
+      // Delete all color size variants
+      await (prisma as any).colorSizeVariant.deleteMany({
+        where: {
+          colorVariant: {
+            productId: String(id),
+          },
+        },
+      });
+
+      // Delete all color variants
+      await (prisma as any).colorVariant.deleteMany({
+        where: {
+          productId: String(id),
+        },
+      });
+
+      // Delete all related product images
       await prisma.productImage.deleteMany({
         where: {
           productId: String(id),
@@ -103,6 +128,7 @@ export default async function handler(
     try {
       const form = new IncomingForm({
         keepExtensions: true,
+        multiples: true,
       });
 
       form.parse(req, async (err, fields, files) => {
@@ -111,27 +137,20 @@ export default async function handler(
         }
 
         // Ensure uploads directory exists
-        const uploadsDir = path.join(
-          process.cwd(),
-          "public",
-          "uploads",
-          "products"
-        );
+        const uploadsDir = path.join(process.cwd(), "public", "uploads");
         if (!existsSync(uploadsDir)) {
           await mkdir(uploadsDir, { recursive: true });
         }
 
         // Extract fields
         const name = (fields.name?.[0] as string) || "";
-        const price = Number.parseFloat((fields.price?.[0] as string) || "0");
         const categoryId = (fields.categoryId?.[0] as string) || null;
-        const color = (fields.color?.[0] as string) || "";
-        const size = (fields.size?.[0] as string) || "";
         const description = (fields.description?.[0] as string) || "";
         const featured = (fields.featured?.[0] as string) === "true";
-
-        // Add this line to extract the stock field
-        const stock = Number.parseInt((fields.stock?.[0] as string) || "5");
+        
+        // Sale fields
+        const onSale = (fields.onSale?.[0] as string) === "true";
+        const salePercentage = onSale ? Number.parseInt((fields.salePercentage?.[0] as string) || "0") : null;
 
         // Handle image URL or file
         let imageUrl = (fields.imageUrl?.[0] as string) || "";
@@ -151,7 +170,7 @@ export default async function handler(
             try {
               const fileContent = await readFile(mainImage.filepath);
               await writeFile(imagePath, fileContent);
-              imageUrl = `/uploads/products/${imageName}`;
+              imageUrl = `/uploads/${imageName}`;
             } catch (error) {
               console.error("Error processing main image file:", error);
               return res
@@ -164,12 +183,11 @@ export default async function handler(
         // Prepare update data
         const updateData: any = {
           name,
-          price,
-          color,
-          size,
           description,
           featured,
-          stock, // Add this line to include the stock field
+          onSale,
+          salePercentage,
+          price: 0, // Always 0 since we use variants for pricing
         };
 
         // Only update imageUrl if it's provided
@@ -180,8 +198,6 @@ export default async function handler(
         // Only update categoryId if it's provided
         if (categoryId) {
           updateData.categoryId = categoryId;
-        } else {
-          updateData.categoryId = null;
         }
 
         // Update the product
@@ -190,62 +206,111 @@ export default async function handler(
             id: String(id),
           },
           data: updateData,
-          include: {
-            category: true,
-            images: true,
+        });
+
+        // Handle color variants update
+        const colorVariantsData = fields.colorVariants?.[0]
+          ? JSON.parse(fields.colorVariants[0] as string)
+          : [];
+
+        // Delete existing color variants and their relations
+        await (prisma as any).colorVariantImage.deleteMany({
+          where: {
+            colorVariant: {
+              productId: String(id),
+            },
           },
         });
 
-        // Handle additional images
-        if (files.additionalImages) {
-          const additionalImages = Array.isArray(files.additionalImages)
-            ? files.additionalImages
-            : [files.additionalImages];
+        await (prisma as any).colorSizeVariant.deleteMany({
+          where: {
+            colorVariant: {
+              productId: String(id),
+            },
+          },
+        });
 
-          for (const image of additionalImages) {
-            if (image && image.filepath) {
-              const imageName = `product-additional-${Date.now()}-${
-                image.originalFilename || "image.jpg"
-              }`;
-              const imagePath = path.join(uploadsDir, imageName);
+        await (prisma as any).colorVariant.deleteMany({
+          where: {
+            productId: String(id),
+          },
+        });
 
-              try {
-                const fileContent = await readFile(image.filepath);
-                await writeFile(imagePath, fileContent);
+        // Create new color variants
+        for (const variantData of colorVariantsData) {
+          // Create color variant
+          const colorVariant = await (prisma as any).colorVariant.create({
+            data: {
+              color: variantData.color,
+              colorHex: variantData.colorHex || null,
+              stock: variantData.stock || 0,
+              productId: String(id),
+            },
+          });
 
-                // Create a new product image
-                await prisma.productImage.create({
+          // Create size variants for this color
+          if (variantData.sizeVariants && variantData.sizeVariants.length > 0) {
+            for (const sizeData of variantData.sizeVariants) {
+              await (prisma as any).colorSizeVariant.create({
+                data: {
+                  size: sizeData.size,
+                  stock: sizeData.stock || 0,
+                  price: sizeData.price ? Number(sizeData.price) : null,
+                  colorVariantId: colorVariant.id,
+                },
+              });
+            }
+          }
+
+          // Handle existing images for this color variant
+          if (variantData.images && variantData.images.length > 0) {
+            for (const imageData of variantData.images) {
+              if (imageData.isExisting && imageData.url) {
+                // Keep existing image
+                await (prisma as any).colorVariantImage.create({
                   data: {
-                    url: `/uploads/products/${imageName}`,
-                    productId: String(id),
+                    url: imageData.url,
+                    colorVariantId: colorVariant.id,
                   },
                 });
-              } catch (error) {
-                console.error("Error processing additional image file:", error);
-                // Continue with other images even if one fails
               }
             }
           }
-        }
 
-        // Handle image IDs to keep
-        if (fields.imageIdsToKeep && fields.imageIdsToKeep[0]) {
-          try {
-            const imageIdsToKeep = JSON.parse(
-              fields.imageIdsToKeep[0] as string
-            );
+          // Handle new images for this color variant
+          const colorFileKey = `colorImages_${variantData.color}`;
+          const colorImages = files[colorFileKey];
 
-            // Delete images that are not in the keep list
-            await prisma.productImage.deleteMany({
-              where: {
-                productId: String(id),
-                id: {
-                  notIn: imageIdsToKeep,
-                },
-              },
-            });
-          } catch (error) {
-            console.error("Error processing image IDs to keep:", error);
+          if (colorImages) {
+            const imageFiles = Array.isArray(colorImages)
+              ? colorImages
+              : [colorImages];
+
+            for (const imageFile of imageFiles) {
+              if (imageFile && imageFile.filepath) {
+                const imageName = `color-${variantData.color}-${Date.now()}-${
+                  imageFile.originalFilename || "image.jpg"
+                }`;
+                const imagePath = path.join(uploadsDir, imageName);
+
+                try {
+                  const fileContent = await readFile(imageFile.filepath);
+                  await writeFile(imagePath, fileContent);
+
+                  await (prisma as any).colorVariantImage.create({
+                    data: {
+                      url: `/uploads/${imageName}`,
+                      colorVariantId: colorVariant.id,
+                    },
+                  });
+                } catch (error) {
+                  console.error(
+                    `Error processing image for color ${variantData.color}:`,
+                    error
+                  );
+                }
+              }
+            }
           }
         }
 
@@ -257,6 +322,13 @@ export default async function handler(
           include: {
             category: true,
             images: true,
+            colorVariants: {
+              include: {
+                images: true,
+                sizeVariants: true,
+              },
+            },
+            sizeVariants: true,
           },
         });
 

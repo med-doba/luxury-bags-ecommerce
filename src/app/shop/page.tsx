@@ -213,6 +213,8 @@ import { Filter, AlertCircle } from "lucide-react";
 import type { Product, Category } from "@/lib/types";
 // import FilterDrawer from "@/app/components/FilterDrawer";
 import { useCloseOnNavigation } from "@/hooks/useCloseOnNavigation";
+import { getDisplayPrice, getSaleInfo } from "@/lib/priceUtils";
+import ProductImageCarousel from "@/app/components/ProductImageCarousel";
 
 export default function ShopPage() {
   const searchParams = useSearchParams();
@@ -345,6 +347,37 @@ export default function ShopPage() {
     setFilteredProducts(filtered);
   };
 
+  // Helper function to get all images from a product
+  const getProductImages = (product: Product) => {
+    const images: { url: string; alt?: string }[] = [];
+    
+    // Add color variant images
+    if (product.colorVariants) {
+      product.colorVariants.forEach((colorVariant) => {
+        if (colorVariant.images) {
+          colorVariant.images.forEach((img) => {
+            images.push({
+              url: img.url,
+              alt: `${product.name} - ${colorVariant.color}`,
+            });
+          });
+        }
+      });
+    }
+    
+    // Add regular product images (legacy)
+    if (product.images) {
+      product.images.forEach((img) => {
+        images.push({
+          url: img.url,
+          alt: product.name,
+        });
+      });
+    }
+    
+    return images;
+  };
+
   return (
     <div className="bg-background min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -379,48 +412,65 @@ export default function ShopPage() {
         ) : filteredProducts.length > 0 ? (
           // Products grid
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
-              <Link
-                href={`/shop/${product.id}`}
-                key={product.id}
-                className="group"
-              >
-                <div className="relative w-full aspect-square overflow-hidden rounded-lg bg-gray-200">
-                  <Image
-                    src={product.imageUrl || "/placeholder.svg"}
-                    alt={product.name}
-                    fill
-                    className="object-cover object-center group-hover:opacity-75 transition-opacity duration-300"
+            {filteredProducts.map((product) => {
+              const saleInfo = getSaleInfo(product);
+              const additionalImages = getProductImages(product);
+              
+              return (
+                <Link
+                  href={`/shop/${product.id}`}
+                  key={product.id}
+                  className="group"
+                >
+                  <ProductImageCarousel
+                    mainImage={product.imageUrl || "/placeholder.svg"}
+                    additionalImages={additionalImages}
+                    productName={product.name}
                     sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                    saleInfo={saleInfo.isOnSale ? {
+                      isOnSale: true,
+                      percentage: saleInfo.percentage
+                    } : { isOnSale: false }}
+                    stockStatus={{
+                      inStock: product.stock > 0,
+                      message: "RUPTURE DE STOCK"
+                    }}
+                    cycleInterval={1600} // 1.6 seconds between images
                   />
-
-                  {/* Out of stock overlay */}
-                  {product.stock <= 0 && (
-                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                      <div className="bg-white px-3 py-1 rounded-md text-red-600 font-bold text-sm flex items-center">
-                        <AlertCircle className="mr-1 h-4 w-4" />
-                        RUPTURE DE STOCK
+                  <div className="mt-4 space-y-1">
+                    <h3 className="text-sm text-gray-700">{product.name}</h3>
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        {saleInfo.isOnSale ? (
+                          <>
+                            <p className="text-lg font-medium text-gray-900">
+                              {saleInfo.salePrice.toFixed(2)} MAD
+                            </p>
+                            <p className="text-sm text-gray-500 line-through">
+                              {saleInfo.originalPrice?.toFixed(2)} MAD
+                            </p>
+                            <span className="px-1.5 py-0.5 text-xs font-bold text-white bg-red-500 rounded">
+                              -{saleInfo.percentage}%
+                            </span>
+                          </>
+                        ) : (
+                          <p className="text-lg font-medium text-gray-900">
+                            {getDisplayPrice(product).toFixed(2)} MAD
+                          </p>
+                        )}
                       </div>
+                      {product.stock > 0 ? (
+                        <span className="text-xs text-green-600">En stock</span>
+                      ) : (
+                        <span className="text-xs text-red-600">
+                          Rupture de stock
+                        </span>
+                      )}
                     </div>
-                  )}
-                </div>
-                <div className="mt-4 space-y-1">
-                  <h3 className="text-sm text-gray-700">{product.name}</h3>
-                  <div className="flex justify-between items-center">
-                    <p className="text-lg font-medium text-gray-900">
-                      {Number(product.price)?.toFixed(2) ?? "0.00"} MAD
-                    </p>
-                    {product.stock > 0 ? (
-                      <span className="text-xs text-green-600">En stock</span>
-                    ) : (
-                      <span className="text-xs text-red-600">
-                        Rupture de stock
-                      </span>
-                    )}
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         ) : (
           // No products found

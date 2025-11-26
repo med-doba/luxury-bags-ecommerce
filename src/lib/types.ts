@@ -32,6 +32,8 @@ export interface Product {
   id: string;
   name: string;
   price: number;
+  onSale?: boolean; // Whether product is on sale
+  salePercentage?: number | null; // Sale percentage (1-99)
   imageUrl: string;
   // category: Category;
   category?: Category | null; // Make category optional or nullable
@@ -42,7 +44,6 @@ export interface Product {
   images: ProductImage[];
   rating: number;
   reviews: number;
-  originalPrice: number;
   seller: string;
   sellerRating: number;
   colors: string[];
@@ -70,6 +71,7 @@ export interface ColorVariantImage {
 export interface ColorVariant {
   id: string;
   color: string;
+  colorHex?: string; // Optional hex color code for custom colors
   stock: number;
   images: ColorVariantImage[];
   sizeVariants?: ColorSizeVariant[]; // Nested size variants for each color

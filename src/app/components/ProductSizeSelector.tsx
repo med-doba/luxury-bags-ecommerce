@@ -24,6 +24,9 @@ interface ProductSizeSelectorProps {
   onSizeChange?: (selectedVariant: SizeVariant | null) => void;
   onStockCheck?: (stock: number) => void;
   disabled?: boolean;
+  // Sale information
+  isOnSale?: boolean;
+  salePercentage?: number;
 }
 
 export default function ProductSizeSelector({
@@ -32,6 +35,8 @@ export default function ProductSizeSelector({
   onSizeChange,
   onStockCheck,
   disabled = false,
+  isOnSale = false,
+  salePercentage = 0,
 }: ProductSizeSelectorProps) {
   const [selectedVariant, setSelectedVariant] = useState<SizeVariant | null>(
     null
@@ -76,6 +81,14 @@ export default function ProductSizeSelector({
     onStockCheck?.(variant.stock);
   };
 
+  // Calculate sale price for a given price
+  const calculateSalePrice = (originalPrice: number) => {
+    if (isOnSale && salePercentage > 0 && salePercentage < 100) {
+      return originalPrice * (1 - salePercentage / 100);
+    }
+    return originalPrice;
+  };
+
   if (!sizeVariants || sizeVariants.length === 0) {
     return null;
   }
@@ -87,9 +100,10 @@ export default function ProductSizeSelector({
     return orderA - orderB;
   });
 
-  const selectedPrice = selectedVariant?.price
+  const selectedOriginalPrice = selectedVariant?.price
     ? Number(selectedVariant.price)
     : basePrice;
+  const selectedPrice = calculateSalePrice(selectedOriginalPrice);
 
   return (
     <div className="space-y-4">
@@ -112,13 +126,14 @@ export default function ProductSizeSelector({
                 <span className="text-red-600 ml-2">(Out of stock)</span>
               )}
             </p>
-            {selectedPrice !== basePrice && (
+            {selectedOriginalPrice !== basePrice && (
               <p className="text-sm mt-1">
-                Price: <span className="font-medium">{selectedPrice} MAD</span>
-                <span className="text-gray-500 ml-1">
-                  ({(selectedPrice - basePrice).toFixed(2)} MAD{" "}
-                  {selectedPrice > basePrice ? "more" : "less"})
-                </span>
+                Price: <span className="font-medium">{Math.round(selectedPrice)} MAD</span>
+                {isOnSale && selectedPrice !== selectedOriginalPrice && (
+                  <span className="text-gray-500 line-through ml-2">
+                    {Math.round(selectedOriginalPrice)} MAD
+                  </span>
+                )}
               </p>
             )}
           </div>
@@ -128,10 +143,11 @@ export default function ProductSizeSelector({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {sortedSizes.map((variant) => {
           const isSelected = selectedVariant?.id === variant.id;
-          const variantPrice = variant.price
+          const originalPrice = variant.price
             ? Number(variant.price)
             : basePrice;
-          const priceDiff = variantPrice - basePrice;
+          const displayPrice = calculateSalePrice(originalPrice);
+          const priceDiff = originalPrice - basePrice;
 
           return (
             <button
@@ -149,7 +165,7 @@ export default function ProductSizeSelector({
               }`}
               title={`${getSizeName(variant.size)} - ${
                 variant.stock
-              } in stock - ${variantPrice} MAD`}
+              } in stock - ${Math.round(displayPrice)} MAD${isOnSale ? ` (${salePercentage}% OFF)` : ''}`}
             >
               <div className="space-y-1">
                 <div className="text-sm font-semibold">
@@ -157,19 +173,14 @@ export default function ProductSizeSelector({
                 </div>
 
                 {/* Price */}
-                <div className="text-xs">
-                  {variantPrice} MAD
-                  {priceDiff !== 0 && (
-                    <span
-                      className={`block ${
-                        isSelected ? "text-gray-300" : "text-gray-500"
-                      }`}
-                    >
-                      {priceDiff > 0
-                        ? `+${priceDiff.toFixed(2)}`
-                        : `${priceDiff.toFixed(2)}`}{" "}
-                      MAD
-                    </span>
+                <div className="text-xs space-y-1">
+                  <div className="font-medium">
+                    {Math.round(displayPrice)} MAD
+                  </div>
+                  {isOnSale && originalPrice !== displayPrice && (
+                    <div className="line-through text-gray-500">
+                      {Math.round(originalPrice)} MAD
+                    </div>
                   )}
                 </div>
 
@@ -243,10 +254,12 @@ export default function ProductSizeSelector({
 
             <div className="text-right">
               <p className="text-lg font-semibold text-gray-900">
-                {selectedPrice} MAD
+                {Math.round(selectedPrice)} MAD
               </p>
-              {selectedPrice !== basePrice && (
-                <p className="text-sm text-gray-500">Base: {basePrice} MAD</p>
+              {isOnSale && selectedPrice !== selectedOriginalPrice && (
+                <p className="text-sm text-gray-500 line-through">
+                  {Math.round(selectedOriginalPrice)} MAD
+                </p>
               )}
             </div>
           </div>

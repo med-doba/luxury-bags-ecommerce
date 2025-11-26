@@ -56,6 +56,32 @@ export default {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
+  		},
+  		animation: {
+  			'fadeInSmooth': 'fadeInSmooth 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards',
+  			'scaleIn': 'scaleIn 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards',
+  		},
+  		keyframes: {
+  			fadeInSmooth: {
+  				'0%': { 
+  					opacity: '0',
+  					transform: 'translateY(2px)'
+  				},
+  				'100%': { 
+  					opacity: '1',
+  					transform: 'translateY(0)'
+  				}
+  			},
+  			scaleIn: {
+  				'0%': { 
+  					opacity: '0',
+  					transform: 'scale(0.95)'
+  				},
+  				'100%': { 
+  					opacity: '1',
+  					transform: 'scale(1)'
+  				}
+  			}
   		}
   	}
   },
