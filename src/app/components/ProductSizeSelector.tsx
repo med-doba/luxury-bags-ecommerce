@@ -128,7 +128,10 @@ export default function ProductSizeSelector({
             </p>
             {selectedOriginalPrice !== basePrice && (
               <p className="text-sm mt-1">
-                Price: <span className="font-medium">{Math.round(selectedPrice)} MAD</span>
+                Price:{" "}
+                <span className="font-medium">
+                  {Math.round(selectedPrice)} MAD
+                </span>
                 {isOnSale && selectedPrice !== selectedOriginalPrice && (
                   <span className="text-gray-500 line-through ml-2">
                     {Math.round(selectedOriginalPrice)} MAD
@@ -165,7 +168,9 @@ export default function ProductSizeSelector({
               }`}
               title={`${getSizeName(variant.size)} - ${
                 variant.stock
-              } in stock - ${Math.round(displayPrice)} MAD${isOnSale ? ` (${salePercentage}% OFF)` : ''}`}
+              } in stock - ${Math.round(displayPrice)} MAD${
+                isOnSale ? ` (${salePercentage}% OFF)` : ""
+              }`}
             >
               <div className="space-y-1">
                 <div className="text-sm font-semibold">

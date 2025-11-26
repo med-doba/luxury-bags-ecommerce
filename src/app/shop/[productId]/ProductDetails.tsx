@@ -2358,9 +2358,15 @@ export default function ProductDetails({ product }: { product: Product }) {
 
   // Calculate dynamic sale info based on current selected price
   const getDynamicSaleInfo = () => {
-    const isOnSale = product.onSale && product.salePercentage && product.salePercentage > 0 && product.salePercentage < 100;
+    const isOnSale =
+      product.onSale &&
+      product.salePercentage &&
+      product.salePercentage > 0 &&
+      product.salePercentage < 100;
     const originalPrice = isOnSale ? currentPrice : null;
-    const salePrice = isOnSale ? currentPrice * (1 - product.salePercentage! / 100) : currentPrice;
+    const salePrice = isOnSale
+      ? currentPrice * (1 - product.salePercentage! / 100)
+      : currentPrice;
     const percentage = isOnSale ? product.salePercentage! : 0;
 
     return {
@@ -2467,16 +2473,18 @@ export default function ProductDetails({ product }: { product: Product }) {
                   <p className="text-xl sm:text-2xl md:text-3xl font-semibold">
                     {getDynamicSaleInfo().salePrice.toLocaleString()} MAD
                   </p>
-                  {getDynamicSaleInfo().isOnSale && getDynamicSaleInfo().originalPrice && (
-                    <>
-                      <p className="line-through text-muted-foreground">
-                        {getDynamicSaleInfo().originalPrice!.toLocaleString()} MAD
-                      </p>
-                      <div className="bg-red-50 text-red-600 text-sm px-3 py-1 rounded-full font-medium">
-                        -{getDynamicSaleInfo().percentage}% OFF
-                      </div>
-                    </>
-                  )}
+                  {getDynamicSaleInfo().isOnSale &&
+                    getDynamicSaleInfo().originalPrice && (
+                      <>
+                        <p className="line-through text-muted-foreground">
+                          {getDynamicSaleInfo().originalPrice!.toLocaleString()}{" "}
+                          MAD
+                        </p>
+                        <div className="bg-red-50 text-red-600 text-sm px-3 py-1 rounded-full font-medium">
+                          -{getDynamicSaleInfo().percentage}% OFF
+                        </div>
+                      </>
+                    )}
                 </div>
 
                 {/* Stock information */}

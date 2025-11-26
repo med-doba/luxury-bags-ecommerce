@@ -36,7 +36,7 @@ export default function FeaturedCollections() {
   // Helper function to get all images from a product
   const getProductImages = (product: Product) => {
     const images: { url: string; alt?: string }[] = [];
-    
+
     // Add color variant images
     if (product.colorVariants) {
       product.colorVariants.forEach((colorVariant) => {
@@ -50,7 +50,7 @@ export default function FeaturedCollections() {
         }
       });
     }
-    
+
     // Add regular product images (legacy)
     if (product.images) {
       product.images.forEach((img) => {
@@ -60,7 +60,7 @@ export default function FeaturedCollections() {
         });
       });
     }
-    
+
     return images;
   };
 
@@ -83,7 +83,7 @@ export default function FeaturedCollections() {
           {products.slice(0, displayCount).map((product) => {
             const saleInfo = getSaleInfo(product);
             const additionalImages = getProductImages(product);
-            
+
             return (
               <Link
                 key={product.id}
@@ -95,10 +95,14 @@ export default function FeaturedCollections() {
                   additionalImages={additionalImages}
                   productName={product.name}
                   sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                  saleInfo={saleInfo.isOnSale ? {
-                    isOnSale: true,
-                    percentage: saleInfo.percentage
-                  } : { isOnSale: false }}
+                  saleInfo={
+                    saleInfo.isOnSale
+                      ? {
+                          isOnSale: true,
+                          percentage: saleInfo.percentage,
+                        }
+                      : { isOnSale: false }
+                  }
                   cycleInterval={1400} // 1.4 seconds between images
                 />
                 <div className="mt-4 space-y-1">

@@ -350,7 +350,7 @@ export default function ShopPage() {
   // Helper function to get all images from a product
   const getProductImages = (product: Product) => {
     const images: { url: string; alt?: string }[] = [];
-    
+
     // Add color variant images
     if (product.colorVariants) {
       product.colorVariants.forEach((colorVariant) => {
@@ -364,7 +364,7 @@ export default function ShopPage() {
         }
       });
     }
-    
+
     // Add regular product images (legacy)
     if (product.images) {
       product.images.forEach((img) => {
@@ -374,7 +374,7 @@ export default function ShopPage() {
         });
       });
     }
-    
+
     return images;
   };
 
@@ -415,7 +415,7 @@ export default function ShopPage() {
             {filteredProducts.map((product) => {
               const saleInfo = getSaleInfo(product);
               const additionalImages = getProductImages(product);
-              
+
               return (
                 <Link
                   href={`/shop/${product.id}`}
@@ -427,13 +427,17 @@ export default function ShopPage() {
                     additionalImages={additionalImages}
                     productName={product.name}
                     sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                    saleInfo={saleInfo.isOnSale ? {
-                      isOnSale: true,
-                      percentage: saleInfo.percentage
-                    } : { isOnSale: false }}
+                    saleInfo={
+                      saleInfo.isOnSale
+                        ? {
+                            isOnSale: true,
+                            percentage: saleInfo.percentage,
+                          }
+                        : { isOnSale: false }
+                    }
                     stockStatus={{
                       inStock: product.stock > 0,
-                      message: "RUPTURE DE STOCK"
+                      message: "RUPTURE DE STOCK",
                     }}
                     cycleInterval={1600} // 1.6 seconds between images
                   />

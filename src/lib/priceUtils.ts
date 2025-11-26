@@ -36,12 +36,17 @@ export function getBaseDisplayPrice(product: Product): number {
  */
 export function getDisplayPrice(product: Product): number {
   const basePrice = getBaseDisplayPrice(product);
-  
+
   // Apply sale percentage if product is on sale
-  if (product.onSale && product.salePercentage && product.salePercentage > 0 && product.salePercentage < 100) {
+  if (
+    product.onSale &&
+    product.salePercentage &&
+    product.salePercentage > 0 &&
+    product.salePercentage < 100
+  ) {
     return calculateSalePrice(basePrice, product.salePercentage);
   }
-  
+
   return basePrice;
 }
 
@@ -88,26 +93,38 @@ export function getPriceRange(product: Product): { min: number; max: number } {
 /**
  * Calculates sale percentage between original and sale price
  */
-export function getSalePercentage(originalPrice: number, salePrice: number): number {
+export function getSalePercentage(
+  originalPrice: number,
+  salePrice: number
+): number {
   if (!originalPrice || originalPrice <= 0 || !salePrice || salePrice <= 0) {
     return 0;
   }
-  
+
   if (salePrice >= originalPrice) {
     return 0;
   }
-  
+
   return Math.round(((originalPrice - salePrice) / originalPrice) * 100);
 }
 
 /**
  * Calculates the sale price based on original price and percentage
  */
-export function calculateSalePrice(originalPrice: number, percentage: number): number {
-  if (!originalPrice || originalPrice <= 0 || !percentage || percentage <= 0 || percentage >= 100) {
+export function calculateSalePrice(
+  originalPrice: number,
+  percentage: number
+): number {
+  if (
+    !originalPrice ||
+    originalPrice <= 0 ||
+    !percentage ||
+    percentage <= 0 ||
+    percentage >= 100
+  ) {
     return originalPrice;
   }
-  
+
   return originalPrice * (1 - percentage / 100);
 }
 
@@ -120,10 +137,16 @@ export function getSaleInfo(product: Product): {
   salePrice: number;
   percentage: number;
 } {
-  const isOnSale = product.onSale && product.salePercentage && product.salePercentage > 0 && product.salePercentage < 100;
+  const isOnSale =
+    product.onSale &&
+    product.salePercentage &&
+    product.salePercentage > 0 &&
+    product.salePercentage < 100;
   const basePrice = getBaseDisplayPrice(product);
   const originalPrice = isOnSale ? basePrice : null;
-  const salePrice = isOnSale ? calculateSalePrice(basePrice, product.salePercentage!) : basePrice;
+  const salePrice = isOnSale
+    ? calculateSalePrice(basePrice, product.salePercentage!)
+    : basePrice;
   const percentage = isOnSale ? product.salePercentage! : 0;
 
   return {

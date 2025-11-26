@@ -153,9 +153,9 @@ export default function ProductsAdmin() {
 
       // Add basic product fields
       Object.entries(newProduct).forEach(([key, value]) => {
-        if (key === 'onSale') {
+        if (key === "onSale") {
           formData.append(key, value.toString());
-        } else if (key === 'salePercentage') {
+        } else if (key === "salePercentage") {
           if (newProduct.onSale && value) {
             formData.append(key, Number(value).toString());
           }
@@ -163,9 +163,9 @@ export default function ProductsAdmin() {
           formData.append(key, value.toString());
         }
       });
-      
+
       // Always set price to 0 since we use variants for pricing
-      formData.append('price', '0');
+      formData.append("price", "0");
 
       // Add main image if a file was selected
       if (mainImageFile) {
@@ -245,12 +245,13 @@ export default function ProductsAdmin() {
             isExisting: true,
           })) || [],
         newImages: [],
-        sizeVariants: cv.sizeVariants?.map((sv) => ({
-          id: sv.id,
-          size: sv.size,
-          stock: sv.stock,
-          price: sv.price || undefined,
-        })) || [],
+        sizeVariants:
+          cv.sizeVariants?.map((sv) => ({
+            id: sv.id,
+            size: sv.size,
+            stock: sv.stock,
+            price: sv.price || undefined,
+          })) || [],
       })) || [];
 
     setEditColorVariants(editVariants);
@@ -355,10 +356,13 @@ export default function ProductsAdmin() {
       formData.append("categoryId", editingProduct.categoryId || "");
       formData.append("featured", editingProduct.featured.toString());
       formData.append("onSale", (editingProduct.onSale || false).toString());
-      
+
       // Add sale percentage only if product is on sale
       if (editingProduct.onSale && editingProduct.salePercentage) {
-        formData.append("salePercentage", editingProduct.salePercentage.toString());
+        formData.append(
+          "salePercentage",
+          editingProduct.salePercentage.toString()
+        );
       }
 
       // Add main image if a new file was selected
@@ -544,32 +548,51 @@ export default function ProductsAdmin() {
                       </p>
                     </div>
 
-                    {newProduct.salePercentage && 
-                     Number(newProduct.salePercentage) > 0 && 
-                     Number(newProduct.salePercentage) < 100 && (
-                      <div className="bg-blue-100 p-3 rounded">
-                        <p className="text-sm font-medium text-blue-800 mb-2">
-                          Sale Preview - {newProduct.salePercentage}% OFF:
-                        </p>
-                        <div className="space-y-1 text-sm">
-                          <p className="text-blue-700">
-                            This discount will be applied to all variant prices in this product.
+                    {newProduct.salePercentage &&
+                      Number(newProduct.salePercentage) > 0 &&
+                      Number(newProduct.salePercentage) < 100 && (
+                        <div className="bg-blue-100 p-3 rounded">
+                          <p className="text-sm font-medium text-blue-800 mb-2">
+                            Sale Preview - {newProduct.salePercentage}% OFF:
                           </p>
-                          <div className="grid grid-cols-2 gap-4 mt-2 text-xs">
-                            <div className="bg-white p-2 rounded">
-                              <p className="font-semibold">Example:</p>
-                              <p>Original: 100.00 MAD</p>
-                              <p className="text-green-600">Sale: {(100 * (1 - Number(newProduct.salePercentage) / 100)).toFixed(2)} MAD</p>
-                            </div>
-                            <div className="bg-white p-2 rounded">
-                              <p className="font-semibold">Another example:</p>
-                              <p>Original: 250.00 MAD</p>
-                              <p className="text-green-600">Sale: {(250 * (1 - Number(newProduct.salePercentage) / 100)).toFixed(2)} MAD</p>
+                          <div className="space-y-1 text-sm">
+                            <p className="text-blue-700">
+                              This discount will be applied to all variant
+                              prices in this product.
+                            </p>
+                            <div className="grid grid-cols-2 gap-4 mt-2 text-xs">
+                              <div className="bg-white p-2 rounded">
+                                <p className="font-semibold">Example:</p>
+                                <p>Original: 100.00 MAD</p>
+                                <p className="text-green-600">
+                                  Sale:{" "}
+                                  {(
+                                    100 *
+                                    (1 -
+                                      Number(newProduct.salePercentage) / 100)
+                                  ).toFixed(2)}{" "}
+                                  MAD
+                                </p>
+                              </div>
+                              <div className="bg-white p-2 rounded">
+                                <p className="font-semibold">
+                                  Another example:
+                                </p>
+                                <p>Original: 250.00 MAD</p>
+                                <p className="text-green-600">
+                                  Sale:{" "}
+                                  {(
+                                    250 *
+                                    (1 -
+                                      Number(newProduct.salePercentage) / 100)
+                                  ).toFixed(2)}{" "}
+                                  MAD
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </div>
                 )}
               </div>
@@ -988,32 +1011,52 @@ export default function ProductsAdmin() {
                           </p>
                         </div>
 
-                        {editingProduct.salePercentage && 
-                         editingProduct.salePercentage > 0 && 
-                         editingProduct.salePercentage < 100 && (
-                          <div className="bg-blue-100 p-3 rounded">
-                            <p className="text-sm font-medium text-blue-800 mb-2">
-                              Sale Preview - {editingProduct.salePercentage}% OFF:
-                            </p>
-                            <div className="space-y-1 text-sm">
-                              <p className="text-blue-700">
-                                This discount will be applied to all variant prices in this product.
+                        {editingProduct.salePercentage &&
+                          editingProduct.salePercentage > 0 &&
+                          editingProduct.salePercentage < 100 && (
+                            <div className="bg-blue-100 p-3 rounded">
+                              <p className="text-sm font-medium text-blue-800 mb-2">
+                                Sale Preview - {editingProduct.salePercentage}%
+                                OFF:
                               </p>
-                              <div className="grid grid-cols-2 gap-4 mt-2 text-xs">
-                                <div className="bg-white p-2 rounded">
-                                  <p className="font-semibold">Example:</p>
-                                  <p>Original: 100.00 MAD</p>
-                                  <p className="text-green-600">Sale: {(100 * (1 - editingProduct.salePercentage / 100)).toFixed(2)} MAD</p>
-                                </div>
-                                <div className="bg-white p-2 rounded">
-                                  <p className="font-semibold">Another example:</p>
-                                  <p>Original: 250.00 MAD</p>
-                                  <p className="text-green-600">Sale: {(250 * (1 - editingProduct.salePercentage / 100)).toFixed(2)} MAD</p>
+                              <div className="space-y-1 text-sm">
+                                <p className="text-blue-700">
+                                  This discount will be applied to all variant
+                                  prices in this product.
+                                </p>
+                                <div className="grid grid-cols-2 gap-4 mt-2 text-xs">
+                                  <div className="bg-white p-2 rounded">
+                                    <p className="font-semibold">Example:</p>
+                                    <p>Original: 100.00 MAD</p>
+                                    <p className="text-green-600">
+                                      Sale:{" "}
+                                      {(
+                                        100 *
+                                        (1 -
+                                          editingProduct.salePercentage / 100)
+                                      ).toFixed(2)}{" "}
+                                      MAD
+                                    </p>
+                                  </div>
+                                  <div className="bg-white p-2 rounded">
+                                    <p className="font-semibold">
+                                      Another example:
+                                    </p>
+                                    <p>Original: 250.00 MAD</p>
+                                    <p className="text-green-600">
+                                      Sale:{" "}
+                                      {(
+                                        250 *
+                                        (1 -
+                                          editingProduct.salePercentage / 100)
+                                      ).toFixed(2)}{" "}
+                                      MAD
+                                    </p>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        )}
+                          )}
                       </div>
                     )}
                   </div>

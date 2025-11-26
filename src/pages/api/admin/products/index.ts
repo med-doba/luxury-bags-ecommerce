@@ -514,10 +514,12 @@ export default async function handler(
         const size = (fields.size?.[0] as string) || ""; // Legacy field
         const description = (fields.description?.[0] as string) || "";
         const featured = fields.featured?.[0] === "true";
-        
+
         // Sale fields
         const onSale = fields.onSale?.[0] === "true";
-        const salePercentage = onSale ? Number.parseInt((fields.salePercentage?.[0] as string) || "0") : null;
+        const salePercentage = onSale
+          ? Number.parseInt((fields.salePercentage?.[0] as string) || "0")
+          : null;
 
         // Legacy field - optional since we use size variants now
         const stock = Number.parseInt((fields.stock?.[0] as string) || "0");

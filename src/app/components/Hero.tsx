@@ -99,6 +99,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { HeroSection } from "@/lib/getHeroSections";
+import NoSSR from "./NoSSR";
 
 interface HeroProps {
   heroSections?: HeroSection[];
@@ -110,6 +111,7 @@ export default function Hero({
   defaultImages = ["/images/1.jpg", "/images/2.jpg", "/images/3.jpg"],
 }: HeroProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isClient, setIsClient] = useState(false);
 
   // Use hero sections if available, otherwise use default images
   const images = heroSections?.length
@@ -129,12 +131,18 @@ export default function Hero({
   };
 
   useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isClient) return;
+
     const interval = setInterval(() => {
       goToNext();
     }, 5000); // Change image every 5 seconds
 
     return () => clearInterval(interval);
-  }, [images.length]);
+  }, [images.length, isClient]);
 
   return (
     <div className="relative h-screen">
@@ -148,32 +156,36 @@ export default function Hero({
           <Image
             src={src || "/placeholder.svg"}
             alt={currentHeroSection?.title || `Luxury bag ${index + 1}`}
-            layout="fill"
-            objectFit="cover"
+            fill
+            className="object-cover"
             quality={100}
             priority={index === 0}
+            sizes="100vw"
           />
         </div>
       ))}
       <div className="absolute inset-0 bg-black bg-opacity-40"></div>
 
-      {/* Left Arrow */}
-      <button
-        onClick={goToPrevious}
-        className="absolute left-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/20 backdrop-blur-sm flex items-center justify-center hover:bg-black/40 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50 z-10"
-        aria-label="Previous slide"
-      >
-        <ChevronLeft className="h-8 w-8 text-white" />
-      </button>
+      {/* Navigation Arrows - Only render on client */}
+      <NoSSR>
+        {/* Left Arrow */}
+        <button
+          onClick={goToPrevious}
+          className="absolute left-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/20 backdrop-blur-sm flex items-center justify-center hover:bg-black/40 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50 z-10"
+          aria-label="Previous slide"
+        >
+          <ChevronLeft className="h-8 w-8 text-white" />
+        </button>
 
-      {/* Right Arrow */}
-      <button
-        onClick={goToNext}
-        className="absolute right-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/20 backdrop-blur-sm flex items-center justify-center hover:bg-black/40 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50 z-10"
-        aria-label="Next slide"
-      >
-        <ChevronRight className="h-8 w-8 text-white" />
-      </button>
+        {/* Right Arrow */}
+        <button
+          onClick={goToNext}
+          className="absolute right-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/20 backdrop-blur-sm flex items-center justify-center hover:bg-black/40 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50 z-10"
+          aria-label="Next slide"
+        >
+          <ChevronRight className="h-8 w-8 text-white" />
+        </button>
+      </NoSSR>
 
       <div className="relative h-full flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8">
         <h1 className="text-4xl font-light tracking-tight text-white sm:text-5xl lg:text-6xl max-w-4xl leading-tight">
@@ -202,17 +214,21 @@ export default function Hero({
           </Link> */}
         {/* </div> */}
       </div>
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
-        {images.map((_, index) => (
-          <button
-            key={index}
-            className={`w-2 h-2 rounded-full ${
-              index === currentImageIndex ? "bg-white" : "bg-gray-400"
-            }`}
-            onClick={() => setCurrentImageIndex(index)}
-          />
-        ))}
-      </div>
+      {/* Indicator Dots - Only render on client */}
+      <NoSSR>
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
+          {images.map((_, index) => (
+            <button
+              key={index}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                index === currentImageIndex ? "bg-white" : "bg-gray-400"
+              }`}
+              onClick={() => setCurrentImageIndex(index)}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      </NoSSR>
     </div>
   );
 }

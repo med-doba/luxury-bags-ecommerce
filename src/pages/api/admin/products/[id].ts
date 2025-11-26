@@ -147,10 +147,12 @@ export default async function handler(
         const categoryId = (fields.categoryId?.[0] as string) || null;
         const description = (fields.description?.[0] as string) || "";
         const featured = (fields.featured?.[0] as string) === "true";
-        
+
         // Sale fields
         const onSale = (fields.onSale?.[0] as string) === "true";
-        const salePercentage = onSale ? Number.parseInt((fields.salePercentage?.[0] as string) || "0") : null;
+        const salePercentage = onSale
+          ? Number.parseInt((fields.salePercentage?.[0] as string) || "0")
+          : null;
 
         // Handle image URL or file
         let imageUrl = (fields.imageUrl?.[0] as string) || "";
