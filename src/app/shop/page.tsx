@@ -305,6 +305,29 @@ export default function ShopPage() {
     fetchProducts();
   }, [categoryId]);
 
+  // Helper function to calculate total stock from all color variants and size variants
+  const calculateTotalStock = (product: Product) => {
+    if (!product.colorVariants || product.colorVariants.length === 0) {
+      // Fallback to main product stock if no color variants
+      return product.stock || 0;
+    }
+
+    let totalStock = 0;
+    product.colorVariants.forEach((colorVariant) => {
+      if (colorVariant.sizeVariants && colorVariant.sizeVariants.length > 0) {
+        // Sum up stock from all size variants within this color
+        totalStock += colorVariant.sizeVariants.reduce((sum, sizeVariant) => {
+          return sum + (sizeVariant.stock || 0);
+        }, 0);
+      } else {
+        // If no size variants, use the color variant's stock
+        totalStock += colorVariant.stock || 0;
+      }
+    });
+
+    return totalStock;
+  };
+
   const handleApplyFilters = (filters: Record<string, string[]>) => {
     let filtered = [...products];
 
@@ -330,11 +353,12 @@ export default function ShopPage() {
               const [min, max] = selectedOptions.map(Number);
               return product.price >= min && product.price <= max;
             case "stock":
-              // Add stock filter
+              // Add stock filter using calculated total stock
+              const totalStock = calculateTotalStock(product);
               if (selectedOptions.includes("IN_STOCK")) {
-                return product.stock > 0;
+                return totalStock > 0;
               } else if (selectedOptions.includes("OUT_OF_STOCK")) {
-                return product.stock <= 0;
+                return totalStock <= 0;
               }
               return true;
             default:
@@ -436,7 +460,7 @@ export default function ShopPage() {
                         : { isOnSale: false }
                     }
                     stockStatus={{
-                      inStock: product.stock > 0,
+                      inStock: calculateTotalStock(product) > 0,
                       message: "RUPTURE DE STOCK",
                     }}
                     cycleInterval={1600} // 1.6 seconds between images
@@ -463,7 +487,7 @@ export default function ShopPage() {
                           </p>
                         )}
                       </div>
-                      {product.stock > 0 ? (
+                      {calculateTotalStock(product) > 0 ? (
                         <span className="text-xs text-green-600">En stock</span>
                       ) : (
                         <span className="text-xs text-red-600">

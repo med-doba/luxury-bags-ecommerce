@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { X, Upload, Plus, Minus } from "lucide-react";
 
@@ -79,6 +79,17 @@ export default function ColorVariantManager({
   const fileInputRefs = useRef<{ [color: string]: HTMLInputElement | null }>(
     {}
   );
+
+  // Clear size variants when product type changes
+  useEffect(() => {
+    if (colorVariants.length > 0) {
+      const updatedVariants = colorVariants.map((variant) => ({
+        ...variant,
+        sizeVariants: [], // Clear all size configurations when product type changes
+      }));
+      onChange(updatedVariants);
+    }
+  }, [productType]); // Only depend on productType to avoid infinite loops
 
   // Helper function to get size options based on product type
   const getSizeOptions = () => {
@@ -274,23 +285,13 @@ export default function ColorVariantManager({
                   <label className="block text-xs font-medium text-gray-700 mb-1">
                     Color
                   </label>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="color"
-                      value={customColorHex}
-                      onChange={(e) => setCustomColorHex(e.target.value)}
-                      className="w-12 h-9 border border-gray-300 rounded cursor-pointer"
-                      disabled={disabled}
-                    />
-                    <input
-                      type="text"
-                      value={customColorHex}
-                      onChange={(e) => setCustomColorHex(e.target.value)}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm font-mono"
-                      placeholder="#000000"
-                      disabled={disabled}
-                    />
-                  </div>
+                  <input
+                    type="color"
+                    value={customColorHex}
+                    onChange={(e) => setCustomColorHex(e.target.value)}
+                    className="w-full h-9 border border-gray-300 rounded cursor-pointer"
+                    disabled={disabled}
+                  />
                 </div>
                 <div className="flex space-x-2">
                   <button

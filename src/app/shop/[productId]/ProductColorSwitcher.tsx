@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import ImageZoomModal from "@/app/components/ImageZoomModal";
 
 // Predefined color mapping (same as admin)
 const COLOR_OPTIONS = [
@@ -12,6 +13,7 @@ const COLOR_OPTIONS = [
   { name: "Tan", value: "tan", hex: "#D2B48C" },
   { name: "Beige", value: "beige", hex: "#F5F5DC" },
   { name: "Navy", value: "navy", hex: "#000080" },
+  { name: "Blue", value: "blue", hex: "#0066CC" },
   { name: "Red", value: "red", hex: "#DC143C" },
   { name: "Pink", value: "pink", hex: "#FFC0CB" },
   { name: "Green", value: "green", hex: "#228B22" },
@@ -28,6 +30,7 @@ interface ColorVariantImage {
 interface ColorVariant {
   id: string;
   color: string;
+  colorHex?: string;
   stock: number;
   images: ColorVariantImage[];
   sizeVariants?: ColorSizeVariant[];
@@ -61,10 +64,49 @@ export default function ProductColorSwitcher({
   );
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
-  // Get color details from predefined options
-  const getColorDetails = (colorName: string) => {
+  // Modal state for zoomed images
+  const [isZoomModalOpen, setIsZoomModalOpen] = useState(false);
+  const [zoomModalImageIndex, setZoomModalImageIndex] = useState(0);
+  const [zoomModalColorFilter, setZoomModalColorFilter] = useState<
+    string | null
+  >(null);
+
+  // Handle opening zoom modal
+  const handleImageClick = (imageIndex: number, colorFilter?: string) => {
+    setZoomModalImageIndex(imageIndex);
+    setZoomModalColorFilter(colorFilter || null);
+    setIsZoomModalOpen(true);
+  };
+
+  // Handle main image click - show all images ONLY if it's the first (main) image
+  const handleMainImageClick = () => {
+    const isFirstMainImage = selectedImageIndex === 0;
+
+    if (isFirstMainImage) {
+      // Show all images only when clicking the first main image
+      handleImageClick(selectedImageIndex);
+    } else {
+      // Show only current color's images for all other images
+      handleImageClick(selectedImageIndex, selectedVariant?.color);
+    }
+  };
+
+  // Get color details from predefined options or variant data
+  const getColorDetails = (colorName: string, variant?: ColorVariant) => {
+    // Capitalize the first letter of the color name
+    const capitalizedName =
+      colorName.charAt(0).toUpperCase() + colorName.slice(1);
+
+    // First, try to use the hex value from the variant if available
+    if (variant?.colorHex) {
+      return { name: capitalizedName, value: colorName, hex: variant.colorHex };
+    }
+
+    // Otherwise, fall back to predefined color options
     const colorOption = COLOR_OPTIONS.find((c) => c.value === colorName);
-    return colorOption || { name: colorName, value: colorName, hex: "#808080" };
+    return (
+      colorOption || { name: capitalizedName, value: colorName, hex: "#808080" }
+    );
   };
 
   // Get ALL images from ALL color variants for the thumbnail wheel
@@ -190,22 +232,38 @@ export default function ProductColorSwitcher({
     }
   };
 
+  const handleThumbnailDoubleClick = (index: number) => {
+    const imageInfo = imageMapping[index];
+    const colorFilter = imageInfo?.variant?.color;
+    handleImageClick(index, colorFilter);
+  };
+
   if (!colorVariants || colorVariants.length === 0) {
     // Fallback to original single image display if no color variants
     return {
       imageGallery: (
-        <div className="space-y-3 md:space-y-6">
-          <div className="aspect-square overflow-hidden rounded-lg md:rounded-xl border border-gray-200 relative group">
-            <Image
-              src={mainProductImage || "/placeholder.svg"}
-              alt={productName}
-              className="w-full h-full object-cover product-image-zoom"
-              width={800}
-              height={800}
-              priority
-            />
+        <>
+          <div className="space-y-3 md:space-y-6">
+            <div className="aspect-square overflow-hidden rounded-lg md:rounded-xl border border-gray-200 relative group cursor-pointer">
+              <Image
+                src={mainProductImage || "/placeholder.svg"}
+                alt={productName}
+                className="w-full h-full object-cover product-image-zoom"
+                width={800}
+                height={800}
+                priority
+                onClick={() => handleImageClick(0)}
+              />
+            </div>
           </div>
-        </div>
+          <ImageZoomModal
+            isOpen={isZoomModalOpen}
+            onClose={() => setIsZoomModalOpen(false)}
+            images={[mainProductImage]}
+            initialIndex={0}
+            productName={productName}
+          />
+        </>
       ),
       colorSelector: null,
       selectedVariant: null,
@@ -215,17 +273,26 @@ export default function ProductColorSwitcher({
   const imageGallery = (
     <div className="space-y-3 md:space-y-6">
       {/* Main Image Display */}
-      <div className="aspect-square overflow-hidden rounded-lg md:rounded-xl border border-gray-200 relative group">
+      <div className="aspect-square overflow-hidden rounded-lg md:rounded-xl border border-gray-200 relative group cursor-pointer">
         <Image
           src={allImages[selectedImageIndex] || "/placeholder.svg"}
           alt={`${productName} in ${
-            getColorDetails(selectedVariant?.color || "").name
+            getColorDetails(
+              selectedVariant?.color || "",
+              selectedVariant || undefined
+            ).name
           }`}
-          className="w-full h-full object-cover product-image-zoom"
+          className="w-full h-full object-cover product-image-zoom transition-transform hover:scale-105"
           width={800}
           height={800}
           priority
+          onClick={handleMainImageClick}
         />
+
+        {/* Zoom indicator */}
+        <div className="absolute top-4 right-4 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+          Click to zoom
+        </div>
 
         {/* Navigation Arrows - only show if multiple images */}
         {allImages.length > 1 && (
@@ -264,14 +331,16 @@ export default function ProductColorSwitcher({
                 const imageInfo = imageMapping[index];
                 const isMainImage = index === 0;
                 const colorDetails = imageInfo?.variant
-                  ? getColorDetails(imageInfo.variant.color)
+                  ? getColorDetails(imageInfo.variant.color, imageInfo.variant)
                   : null;
 
                 return (
                   <button
                     key={index}
                     onClick={() => handleThumbnailClick(index)}
+                    onDoubleClick={() => handleThumbnailDoubleClick(index)}
                     className="focus:outline-none relative"
+                    title="Click to select, double-click to zoom"
                   >
                     <div
                       className={`aspect-square w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 overflow-hidden rounded-lg border-2 transition-all duration-200 ${
@@ -336,7 +405,8 @@ export default function ProductColorSwitcher({
                 : imageMapping[selectedImageIndex]?.variant
                 ? `${
                     getColorDetails(
-                      imageMapping[selectedImageIndex].variant.color
+                      imageMapping[selectedImageIndex].variant.color,
+                      imageMapping[selectedImageIndex].variant
                     ).name
                   } variant`
                 : "Product image"}
@@ -346,7 +416,7 @@ export default function ProductColorSwitcher({
             <p className="mt-1">
               Selected color:{" "}
               <span className="font-medium">
-                {getColorDetails(selectedVariant.color).name}
+                {getColorDetails(selectedVariant.color, selectedVariant).name}
               </span>
               {(() => {
                 const totalStock =
@@ -377,7 +447,7 @@ export default function ProductColorSwitcher({
 
       <div className="flex flex-wrap gap-3">
         {colorVariants.map((variant) => {
-          const colorDetails = getColorDetails(variant.color);
+          const colorDetails = getColorDetails(variant.color, variant);
           const isSelected = selectedVariant?.id === variant.id;
 
           // Calculate total stock for this color variant
@@ -450,7 +520,7 @@ export default function ProductColorSwitcher({
               />
               <div>
                 <p className="font-medium text-gray-900">
-                  {getColorDetails(selectedVariant.color).name}
+                  {getColorDetails(selectedVariant.color, selectedVariant).name}
                 </p>
                 <p className="text-sm text-gray-600">
                   {allImages.length} total image
@@ -495,7 +565,20 @@ export default function ProductColorSwitcher({
   );
 
   return {
-    imageGallery,
+    imageGallery: (
+      <>
+        {imageGallery}
+        <ImageZoomModal
+          isOpen={isZoomModalOpen}
+          onClose={() => setIsZoomModalOpen(false)}
+          images={allImages}
+          initialIndex={zoomModalImageIndex}
+          productName={productName}
+          filterByColor={zoomModalColorFilter || undefined}
+          colorVariants={colorVariants}
+        />
+      </>
+    ),
     colorSelector,
     selectedVariant,
   };
