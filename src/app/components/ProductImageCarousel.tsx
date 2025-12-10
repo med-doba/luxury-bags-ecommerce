@@ -54,9 +54,20 @@ export default function ProductImageCarousel({
   useEffect(() => {
     if (isHovered && hasMultipleImages) {
       // Start the smooth image cycling
+      // setCurrentImageIndex(1);
+      // if (intervalRef.current) {
+      //   clearInterval(intervalRef.current);
+      //   intervalRef.current = null;
+      // }
+      // intervalRef.current = setInterval(() => {
+      //   setCurrentImageIndex((prevIndex) =>
+      //     prevIndex === allImages.length - 1 ? 0 : prevIndex + 1
+      //   );
+      // }, cycleInterval);
+
       intervalRef.current = setInterval(() => {
         setCurrentImageIndex((prevIndex) =>
-          prevIndex === allImages.length - 1 ? 0 : prevIndex + 1
+          prevIndex === allImages.length - 1 ? 0 : 1
         );
       }, cycleInterval);
     } else {
@@ -128,7 +139,7 @@ export default function ProductImageCarousel({
       )}
 
       {/* Image Indicator Dots (only show if multiple images) */}
-      {hasMultipleImages && (
+      {/* {hasMultipleImages && (
         <div
           className={`absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10 transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] ${
             isHovered
@@ -147,7 +158,7 @@ export default function ProductImageCarousel({
             />
           ))}
         </div>
-      )}
+      )} */}
 
       {/* Enhanced overlay effect on hover */}
       <div
